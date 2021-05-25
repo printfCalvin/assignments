@@ -1,0 +1,101 @@
+---
+title: "a68"
+author: "Mushi Wang"
+date: "15/07/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.(a)
+```{r}
+com = read.csv("commissions.csv")
+plot(com$Hours_Worked, com$Commission, xlab = "hours worked", ylab = "commission")
+```
+Since there is a roughly linear relationship. Also the plot is bell shaped, the variance of residual is not a constant. Hence we want to use a ratio estimation.
+
+\newpage
+1.(b)
+```{r}
+mean(com$Commission)
+mean(com$Hours_Worked)
+length(com$Unit)
+306.1579 / 22.15789 * 21
+```
+
+$\hat{\mu}_{ratio} = \frac {\bar{y}} {\bar{x}} \mu_x = \frac {306.1579} {22.15789} \cdot 21 = 290.1592$
+
+```{r}
+sqrt_hours = sqrt(com$Hours_Worked)
+com_ratio = data.frame(unit = com$Unit, hours_worked = com$Hours_Worked / sqrt_hours, 
+                       commission = com$Commission / sqrt_hours)
+com_ratio_model = lm(com_ratio$commission ~ com_ratio$hours_worked - 1)
+summary(com_ratio_model)
+```
+From summary, $\hat{\sigma}_{ratio} = 29.07$
+
+So, a 95% C.I. for the mean commission is 
+\begin{align*}
+  & \hat{\mu}_{ratio} \pm \frac {c \hat{\sigma}_{ratio}} {\sqrt n} \sqrt{1 - \frac n N} \text{\quad where $C \sim N(0, 1)$}\\
+  = & 290.1592 \pm 1.96 \frac {29.07} {\sqrt 38} \sqrt{1 - \frac {38} {112}}\\
+  = & [282.6462, 297.6722]
+\end{align*}
+We are 95% confident that the mean commission lies in that interval.
+
+Since $\tilde Y_{tot} = N \cdot \tilde \mu_{ratio}$.
+
+$\hat{y}_{tot} = N \cdot \hat{\mu}_{ratio} = 32497.83$, 
+$sd(\hat y_{tot}) = \sqrt {N^2 \cdot var(\mu_{ratio})} = N \cdot sd(\mu_{ratio})$
+
+a 95% C.I. for the total commission is 
+\begin{align*}
+  & \hat{\mu}_{ratio} \pm \frac {c N \hat{\sigma}_{ratio}} {\sqrt n} \sqrt{1 - \frac n N} \text{\quad where $C \sim N(0, 1)$}\\
+  = & 32497.83 \pm 1.96 \times 112 \frac {29.07} {\sqrt 38} \sqrt{1 - \frac {38} {112}}\\
+  = & [31656.37, 33339.29]
+\end{align*}
+We are 95% confident that the total commission lies in that interval.
+
+\newpage
+1.(c)
+$\frac {19} {20} = 0.95$
+\begin{align*}
+  \frac {c \hat{\sigma}_{ratio}} {\sqrt n} \sqrt{1 - \frac n N} & \leq 1 \text{\quad where $C \sim N(0, 1)$}\\
+  \sqrt{\frac 1 n - \frac {1} {112}} & \leq \frac {1} {1.96 \times 29.07}\\
+  \frac 1 n & \leq \frac {1} {3246.401} + \frac {1} {112}\\
+  n & \geq 108.2649
+\end{align*}
+So we need at least 109 employers
+
+\newpage
+1.(d)
+```{r}
+sqrt(var(com$Commission))
+```
+$\hat{\sigma}_{y} = 185.2197$, $\hat{\mu}_y = \bar y = 306.1579$
+
+So, a 95% C.I. is
+\begin{align*}
+  & \hat{\mu}_{y} \pm \frac {c \hat{\sigma}_{y}} {\sqrt n} \sqrt{1 - \frac n N} \text{\quad where $C \sim N(0, 1)$}\\
+  = & 306.1579 \pm 1.96 \frac {185.2197} {\sqrt 38} \sqrt{1 - \frac {38} {112}}\\
+  = & [258.2885, 354.0273]
+\end{align*}
+
+This C.I. is much wider than the ratio intervals since $\hat \sigma_y$ is much larger. Hence the ratio interval is more accurate.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

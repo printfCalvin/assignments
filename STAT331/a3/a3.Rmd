@@ -1,0 +1,120 @@
+---
+title: "a3-q2, q3"
+date: "06/11/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+2.(a)
+```{r}
+options(scipen=999)
+car = read.table("car_consumption.txt", header = TRUE)
+price = car$price
+engine = car$engine
+hp = car$hp
+weight = car$weight
+consumption = car$consumption
+fit = lm(consumption ~ price + engine + hp + weight)
+summary(fit)
+```
+Thus the fitted equation is $y = 1.83800628 + 0.00003394x_1 + 0.00120783x_2 - 0.00374192x_3 + 0.00372829x_4$
+
+(b)
+```{r}
+qf(0.95, 4, 22)
+```
+Form summary in part(a), $\lvert F \rvert > F_{0.05, 4, 22}$.
+Hence we reject $H_0$ at 0.05 significance level, at least one variable is significant.
+92.95% of the total variation in responses can be explianed by the linear model.
+
+(c)
+we test explaplanatory variables at $0.05$ significance level
+```{r}
+qt(0.975, 22)
+```
+From summary(fit) in part(a), $t_{\beta_4} > t_{0.025, 22}$. We can conclude that weight is important in determining the consumption of the car.
+
+(d)
+```{r}
+newdata = data.frame(price = 40000, engine = 2000, hp = 100, weight = 1500)
+predict(fit, newdata, interval = "prediction")
+```
+The 95% prediction interval is $[9.37299, 12.28569]$
+
+(e)
+```{r}
+max(car$price)
+```
+It is not appropriate to predict the consumption for another new carwith the same engine size, weight and horse power as the one in (d), but is much moreexpensive with a price tag of 60000.Since the maximum value of price is 50900 which is smaller than 60000.
+
+
+(f)
+From summary(fit), horsepower is insignificant
+```{r}
+fit2 = lm(car$consumption~car$price+car$engine+car$weight)
+summary(fit2)
+```
+Car price is the most insignificant predictor, sow we remove it.
+```{r}
+fit3 = lm(consumption~engine+weight)
+summary(fit3)
+```
+Multiple R-squared:  0.9295,	Adjusted R-squared:  0.9167 
+$R^2$ from the first model is slightly greater than the $R^2$ from this model.
+Adjusted $R^2$ from the first model is slightly smaller than the adjusted $R^2$ from this model.
+
+(g)
+```{r}
+newdata = data.frame(engine = 2000, weight = 1500)
+predict(fit3, newdata, interval = "prediction")
+```
+The 95% prediction interval is $[9.394866, 12.14793]$
+$[9.37299, 12.28569]$
+The length of two intervals are really close, but for the first model we have two insignificant variables and the last mode has narrower length ,I would prefer the last model.
+
+3.
+(a)
+```{r}
+options(scipen=999)
+tire = read.table("tire.txt", header = TRUE,)
+plot(tire[tire$x2 == 'A', ]$x1, tire[tire$x2 == 'A', ]$y, xlab = 'crusing speed', ylab = 'cost per mile', col="red", pch = 0)
+par(new = TRUE)
+points(tire[tire$x2 == 'B', ]$x1, tire[tire$x2 == 'B', ]$y, xlab = 'crusing speed', ylab = 'cost per mile', col="blue", pch = 16)
+legend(60, 15, legend=c('A', 'B'), col=c('red', 'blue'), pch=c(0,16))
+```
+The relationship appears to be the same in the middle, but different at small or large speed.
+
+(b)
+```{r}
+type = factor(tire$x2)
+tirefit = lm(tire$y~type + tire$x1 + tire$x1 * type)
+summary(tirefit)
+```
+We want to test $H_0: \beta_3 = 0$ vs $H_a: \beta_3 \neq 0$
+```{r}
+nrow(tire)
+qt(0.975, nrow(tire) - 4)
+```
+using t-test\
+$\lvert t \rvert = 5.069$(from summary) and $t_{0.025, 16} = 2.119905$. Hence, $\lvert t \rvert > t_{0.025, 16}$\
+And, p-value$= 0.000114 < 0.05$.\
+We reject $H_0$. The makes of tires is significant to the slop whcih is the additional operation cost per mile if curusing speed increased by 1 unit.
+
+(c)
+```{r}
+tirefit2 = lm(tire$y ~ tire$x1)
+anova(tirefit2, tirefit)
+```
+
+We want to test $H_0: \beta_1 = \beta_3 = 0$ vs $H_a: \beta_1 \neq \beta_3 \neq 0$\
+using f-test\
+```{r}
+((49.969 - 19.108) / 2) / (19.108 / 16)
+qf(0.95, 2, 16)
+```
+
+$F = \frac {(49.969 - 19.108) / 2} {19.108 / 16} = 12.92066 > F_{2, 16}$
+so we reject $H_0$, the makes of tires is significant to operation cost per mile.

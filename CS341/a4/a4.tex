@@ -1,0 +1,293 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage,amsmath, graphicx}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{amsthm}
+\usepackage{todonotes}
+\renewcommand{\baselinestretch}{1.02}
+\newcommand{\Q}[1]{\medskip\item {[{\em #1 marks\/}]}\ }
+\usepackage{xcolor}
+\newif\ifsol
+\soltrue
+\newcommand{\solution}[1]{{\ifsol \color{red} {#1} \fi}}
+
+\newtheorem{claim}{Claim}
+
+\newcommand{\down}[1]{\left\lfloor #1\right\rfloor}
+\newcommand{\up}[1]{\left\lceil #1\right\rceil}
+
+\begin{document}
+
+\hfill CS 341, Spring 2020\par
+\hfill Semih Salihoglu
+
+\bigskip
+\begin{center}\large\bf Assignment 4 (due Sunday, July 12th, midnight EST)
+\end{center}
+
+\noindent{\bf Instructions:}
+\begin{itemize}
+\item Hand in your assignment using Crowdmark. Detailed instructions are on the course website.
+\item Give complete legible solutions to all questions.
+\item Your answers will be marked for clarity as well as correctness.
+\item For any algorithm you present, you should justify its correctness
+(if it is not obvious) and analyze the complexity.
+\end{itemize}
+
+\begin{enumerate}
+
+\Q{12} {\em Asymptotic Notation } For parts (b) and (c) below, for each pair of functions $f(n)$ and $g(n)$, fill in the correct asymptotic notation among $\Theta$,
+$o$, and $\omega$ in the statement $f(n)\in$ \verb*| | $(g(n))$.
+You must include brief justifications of all your answers.
+
+\begin{enumerate}
+\Q{6} Arrange the following functions in \textbf{increasing} order of growth rate. All logarithms are in \textbf{base 10}. You do not need to formally justify your answer. %Briefly explain.
+\begin{center}
+$1.01^n,\quad$ 
+$n\log_{10}(n),\quad$ 
+$n^{\log_{10}(n)},\quad$ 
+$\log_{10}(\pi^n),\quad$ 
+$3^{\log_{10}(n)},\quad$
+$n^{2017}$
+\end{center}
+
+The order is
+$\log_{10}(\pi^n),\quad$
+$3^{\log_{10}(n)},\quad$
+$n\log_{10}(n),\quad$
+$n^{2017},\quad$
+$n^{\log_{10}(n)},\quad$
+$1.01^n$
+
+\Q{2}  $f(n) = \sum_{i=0}^{\lfloor\log_3 n\rfloor} 3^i$\ \ vs.\ \ $g(n) = 0.5 n$
+
+\begin{align*}
+    f(n) & = \sum_{i=0}^{\lfloor\log_3 n\rfloor} 3^i \\
+    & = \frac {3^{\lfloor \log_3 n \rfloor + 1} - 1} {3 - 1} + 1\\
+    & \leq \frac {3n - 1} {2} + 1\\
+    & = \Theta(n)
+\end{align*}
+Since $g(n) = \Theta n$, $f(n) \in \Theta(g(n))$
+\Q{2} $f(n) = 4^{n^2}$\ \ vs.\ \ $g(n) = 100^n$
+
+$\lim_{n \to \infty} \frac {4^{n^2}} {100^n} = \lim_{n \to \infty} (\frac {4} {100})^n \cdot 4^{n^2 - n}$\\
+Since, $\lim_{n \to \infty} (\frac {4} {100})^n = \infty$ and $\lim_{n \to \infty} 4^{n^2 - n} = \infty$,
+$\lim_{n \to \infty} \frac {f(n)} {g(n)} = \infty$. Therefore, $f(n) \in \omega(g(n))$
+
+\Q{2} Answer with a YES or NO with a brief justification: If $f(n)=\Theta(n\log n + n)$ and $g(n)=\Theta(n\log n)$,
+does it always follow that $f(n)-g(n)=\Theta(n)$? 
+
+No. Let $f(n) = 2n \log n + n$ and $g(n) = n \log n$.\\
+Clearly, $f(n) = \Theta (n \log n + n)$ and $g(n) = \Theta(n \log n)$\\
+But $f(n) - g(n) = n \log n + n \neq \Theta(n)$
+
+\end{enumerate}
+
+\newpage
+\Q{12} {\em Divide and Conquer} 
+
+Suppose two people rank a list of $n$ items (say movies), denoted $M_1, \dots , M_n$.
+A {\it conflict} is a pair of movies $\{M_i,M_j\}$ such that $M_i > M_j$ in one
+ranking and $M_j > M_i$ in the other ranking. The number of conflicts between two rankings
+is a measure of how different they are. 
+
+For example, consider the following two rankings:
+\[ M_1 > M_2 > M_3 > M_4 \quad \mbox{and} \quad M_2 > M_4 > M_1 > M_3.\]
+The number of conflicts is three; $\{M_1,M_2\}$, $\{M_1,M_4\}$, and $\{M_3,M_4\}$
+are the conflicting pairs.
+
+The purpose of this question is to find an $O(n \log n)$ divide-and-conquer algorithm to compute
+the number of conflicts between two rankings of $n$ items. 
+For simplicity, you can assume $n$ is a power of two. Also, without loss of generality you can simplify your notation and assume that the {\it first ranking} is $M_1 > M_2 > \cdots > M_n$. Give a pseudocode description of your algorithm, briefly justify its correctness and analyze the complexity using a recurrence relation.
+
+We use merge sort on the second array and count the number of elements in $L$ less than $R[i]$ when merge. 
+Let $n_i$ be he number of elements in $L$ less than $R[i]$ when merge.
+
+\begin{algorithm}[h]
+    \caption{findConflict($M[M_1,\dots, Mn], M'$)}
+    \SetKwProg{mgs}{mergeSort($M$)}{: }{end}
+    \mgs{} {
+        \textbf{Output:} a pair $(M, val)$ where $M$ is sorted list and $val = \sum_{i = 0}^{n - 1} n_i$.\\
+        \If{$\lvert M \rvert \leq 1$}{
+            \Return{$(M, 0)$}
+        }
+        $(L, n_l) = mergeSort(M[0, \dots, n / 2 - 1])$\\
+        $(R, n_r) = mergeSort(M[n / 2, \dots, n])$\\
+        $i, j, k, n = 0$\\
+        \While{$i < n / 2$ \textbf{or} $j < n / 2$}{
+            suppose $L[i] = M_u$ and $R[j] = M_v$\\
+            \uIf{$j \geq n / 2$ \textbf{or} $u < v$}{
+                $A[k] = L[i]$\\
+                $n = n + j$\\
+                $i = i + 1$\\
+            }
+            \Else{
+                $A[k] = L[j]$\\
+                $j = j + 1$\\
+            }
+            $k = k + 1$\\
+        }
+        \Return{$(A, n + n_l + n_r)$}
+    }
+
+    \SetKwProg{fn}{findConflict($M[M_1,\dots, Mn], M'$)}{: }{end}
+    \fn{} {
+        suppose $M_1 < M_2 < \cdots < M_n$\\
+        \Return{$\text{mergeSort}(M').first$}
+    }
+    
+\end{algorithm}
+
+\textbf{Proof of Correctness:} We first proof that $n$ is the number of conflicts between $L$ and $R$. 
+Assume $n_i$ is the number of elements in $L$ that is less than $R[i]$ at some iteration. Then $i$ has the 
+smallest index in the orgional array than every elements in $L$. Since there are $n_i$ elements is less than 
+$R[i]$. The number of conflict is exactly $n_i$. $n = \sum_{i = 0}^{n - 1} n_i$ is the number of conflicts 
+between $L$ and $R$. \\
+Since total number of conflicts is the sum of the number of conflicts in $L$, the number of 
+conflicts in $R$ and the number of conflicts between $L$ and $R$. The total number of conflicts is the sum of 
+$n_i$.\\
+
+\textbf{Runtime analysis:}
+\[ T_{ms}(n) = \begin{cases} 
+    2 T_{ms}(\frac n 2) + O(n) & x > 1 \\
+    O(1) & x = 1
+ \end{cases}
+\]
+Since $a = 2, b = 2, d = 1$, by master theorem, $T_{ms}(n) = \Theta(n \log n)$\\
+Thus, $T(n) = T_{ms}(n) = O(n \log n)$
+
+\newpage
+\Q{12} {\em Greedy } Given $n$ intervals $[a_1, b_1], ..., [a_n, b_n]$, decide whether there are $n$ points $p_1, ..., p_n$ such that: (i) each $p_i \in [a_i, b_i]$; and (ii) consecutive points are at least distance 2 apart, i.e.,  $p_{i+1} - p_i \ge 2$. Design an $O(n)$ time greedy algorithm to solve this problem. 
+
+For example, if the input is $[0.9, 4]$ $[2.2, 3.3]$ $[4.5, 5]$ $[6.5, 7.5]$, then the answer is YES, since, e.g., 1, 3, 5, 7, satisfies the conditions mentioned above (i.e., cut each line and are at least 2 apart).
+Your algorithm needs to only return YES/NO but can also return the actual set of points if the answer is YES. As usual, show the runtime of your algorithm and prove its correctness.
+
+[Hint: You may not need an exchange argument or greedy-stays-ahead argument here but any correct argument will get full credits.]
+
+we try to pick the smallest point in each interval that satisfies the constraint $p_{i+1} - p_i \ge 2$, 
+that is $min(a_i, a_{i - 1} + 2)$.
+
+\begin{algorithm}[h]
+    \caption{cut($[a_1, b_1], \dots, [a_n, b_n]$)}
+    $P[1] = a_1$\\
+    \For{$i = 2, \cdots, n - 1$}{
+        \uIf{$b_i < a_{i - 1} + 2$}{
+            \Return{NO}
+        } \Else {
+            $P[i] = max(a_i, a_{i - 1} + 2)$\\
+        }
+    }
+    \Return{(YES, $P$)}
+\end{algorithm}
+
+\textbf{Proof of Correctness:} If the algorithm returns YES, clearly, $p_{i + 1} - p_i > 2$ and point $p_i$ is 
+in $[a_i, b_i]$. If the algorithm returns NO, let $[a_i, b_i]$ be the interval when the algorithm terminates. 
+So $b_i < a_{i - 1} + 2$. Assume for contradiction, that there is a solution $S$. Then $p_{i - 1} \in S$ and 
+$p_{i - 1} < P[i - 1]$. However, $P[i - 1] = max(a_{i - 1}, a_{i - 2} + 2)$. $p_{i - 2} < P[i - 2]$ which 
+is the most left point that we can pick.
+We keep decrease the index $i$ to $i = 1$ and get $p_1 < P[1]$. But $P[1] = a_1$, $p_1 \notin [a_1, b_1]$, 
+a contradiction.
+
+\textbf{Runtime Analysis:} $T(n) = n O(1) = O(n)$
+
+\newpage
+\Q{15} {\em Dynamic Programming } You are given $n$ positive integers $a_1, ..., a_n$, a number $k$, and a target amount $W$, where both $k$ and $W$ are also positive integers. Find a subset $S \subseteq \{a_1, ..., a_n\}$ of size at most $k$ such that sum of the elements in $S$ is as close to $W$ as possible, i.e., minimize the quantity $|\Sigma_{a \in S} a - W|$. $S=\emptyset$ has sum 0 and is $W$ away from the target.  Design an $O(nW)$ time dynamic programming algorithm to solve this question. An $O(nkW)$ algorithm will get at most 10 marks (so most but not all the marks).
+
+Let $A_{(n + 1) \times (2W + 1)}$, $A[i][j] = (true \backslash false, l)$ where $true \backslash false$ 
+represents if there exists a $S \subseteq \{a_1, ..., a_i\}$ such that $\sum_{a \in S} a = j$ and 
+$\lvert S \rvert = l$.
+
+\begin{algorithm} [h]
+    \caption{TraceBack($[a_1, \dots, a_n], A, i, j$)}
+    \While{$i > 0$}{
+        \uIf{$j - a_i > 0$ \textbf{and} $A[i - 1][j].first = true$ \textbf{and} 
+        $A[i - 1][j - a_i].first = true$ \textbf{and} $A[i - 1][j].second > A[i - 1][j - a_i].second$}{
+            $S = S \cup \{a_i\}$ \\
+            $j = j - a_i$ \\
+        }
+        \ElseIf{$j - a_i > 0$ \textbf{and} $A[i - 1][j - a_i].first = true$} {
+            $S = S \cup \{a_i\}$ \\
+            $j = j - a_i$ \\
+        }
+        $i = i - 1$ \\
+    }
+    \Return{$S$}
+\end{algorithm} 
+
+\newpage
+\begin{algorithm} [h]
+    \caption{findClosest($[a_1, \dots, a_n], k, W$)}
+    $A_{(n + 1) \times (2W + 1)}$ where $A[i][j] = (false, 0) \quad \forall i, j$ \\
+    $A[i][0] = (true, 0)$\\
+    \For{$i = 1, \dots, n$} {
+        \For{$j = 1, \dots, 2W$} {
+            \uIf{$j - a_i > 0$ \textbf{and} $A[i - 1][j].first = true$ \textbf{and} $A[i - 1][j - a_i].first = true$}{
+                \uIf{$A[i - 1][j].second <= A[i - 1][j - a_i].second$}{
+                    $A[i][j] = A[i - 1][j]$ \\
+                } \Else {
+                    $A[i][j] = (true, A[i - 1][j - a_i].second + 1)$ \\
+                }
+            }
+            \uElseIf{$j - a_i < 0$ \textbf{or} $A[i - 1][j].first = true$}{
+                $A[i][j] = A[i - 1][j]$\\
+            } \uElseIf{$A[i - 1][j - a_i].first = true$} {
+                $A[i][j].first = (true, A[i - 1][j - a_i].second + 1)$\\
+            } \Else {
+                $A[i][j].first = (false, 0)$
+            }
+        }
+    }
+    $j = W$\\
+    $B = [W, W - 1, W + 1, W - 2, W + 2, \dots, 0, 2W]$\\
+    \For{$j \in B$} {
+        \For{$i = 0, \dots, n$}{
+            \If{$A[i][j].first = true$ \textbf{and} $A[i][j].second <= k$}{
+                \Return{TraceBack($[a_1, \dots, a_n], A, i, j$)}
+            }
+        }
+    }
+\end{algorithm}
+
+\textbf{Proof of Correctness:} Consider the subproblem with $i - 1$ positive integers $\{a_1, \dots, a_{i - 1}\}$ 
+and a target amount $j$ such that there exists a subset $S$, $\sum_{a \in S} a = j$. We claim that $a_i$ is 
+either in $S$ or not in $S$. If $a_i \in S$, then there exists a subset $S' \subseteq \{a_1, ..., a_{i - 1}\}$ 
+such that $\sum_{a \in S'} a = j - a_i$. If $a_i \notin S$, then either $S$ does not exists, or we can find a 
+$S' \subseteq \{a_1, ..., a_{i - 1}\}$ such that  $\sum_{a \in S'} a = j$. Therefore, $A[i][j]$ always contains 
+the correct output.\\
+In TraceBack($[a_1, \dots, a_n], A, i, j$), $i$ decreases 1 in each iteration, therefore it always terminates.\\
+Let $S \subseteq \{a_1, ..., a_n\}$ be the solution that minimize $|\sum_{a \in S} a - W|$. 
+$\sum_{a \in S} \in [0, 2W]$, otherwise, the solution would be $\emptyset$ if $\sum_{a \in S} > 2W$. Therefore,  
+We can find $S$ by checking each column in $A$ in the order of $W, W - 1, W + 1, W - 2, W + 2, \dots, 0, 2W$ 
+and back track the elements.
+
+\textbf{Runtime Analysis:} Since the for loop starting from line 18 in findClosest goes throught at most 
+$O(nW)$ elements, it has runtime $O(nW)$.
+$T(n, W) = 2W \cdot n O(1) + O(nW) = O(nW)$
+
+\newpage
+\Q{8} {\em Graph Algorithm } Given a directed graph $G = (V, E)$ with $m$ edges and $n$ vertices, an edge $e$ is circular if there exists a cycle that contains $e$. Give an $O(m + n)$-time algorithm to identify all circular edges in $G$.  As usual show the runtime of your algorithm and prove its correctness.
+
+We can run Kosaraju's Alogrithm to indetify the strongly connected components in $G$. Once the algorithm 
+successfully indetified a strongly connected component, we return all the edges inside that component. We keep 
+running the algorithm until we go through all strongly connected components in $G$.
+
+\textbf{Proof of Correctness:} Since the SCC graph of $G$ is a DAG, the edges in the SCC graph of $G$ cannot 
+be contained in a cycle. So only the edges inside each SCC can be contained in a cycle. We claim that all 
+edges in all SCCs are contained in some cycle.
+\begin{proof}
+    Assume for contradiction, that there exists an edge $e$ that are not contained in any cycle in a SCC.\\
+    Let $u, v$ be the vertices that are incident to $e$. WLOG, let $e$ points to $v$ from $u$. We cannot find 
+    a path from $v$ to $u$ since $e$ are not contained in any cycle. But by the definition of SCC, there exists 
+    a path form $v$ to $u$, a contradiction.
+\end{proof}
+
+\textbf{Runtime Analysis:} Since we can report the edges in each SCC when doing DFS/BFS in each SCC, the runtime 
+of collection edges is $O(1)$, so it has the same runtime as Kosaraju's Alogrithm which is $O(m + n)$.
+
+\end{enumerate}
+
+
+
+
+
+\end{document}
+

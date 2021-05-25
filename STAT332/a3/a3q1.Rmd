@@ -1,0 +1,79 @@
+---
+title: "a3q1"
+author: "Mushi Wang"
+date: "11/06/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.
+```{r}
+options(contrasts = c('contr.sum', 'contr.copy'))
+dia1 = c(80, 83, 83, 85)
+dia2 = c(75, 75, 79, 79)
+dia3 = c(74, 73, 76, 77)
+dia4 = c(67, 72, 74, 74)
+dia5 = c(62, 62, 67, 69)
+dia6 = c(60, 61, 64, 66)
+y = c(dia1, dia2, dia3, dia4, dia5, dia6)
+x = as.factor(c(rep(1, 4), rep(2, 4), rep(3, 4), rep(4, 4), rep(5, 4), rep(6, 4)))
+```
+
+(a)
+We want to use F-test.
+
+$H_0 : \tau_1 = \tau_2 = \tau_3 = \tau_4 = \tau_5 = \tau_6 = 0$, $H_a :$ at least one is not $0$
+```{r}
+model = lm(y ~ x)
+summary(model)
+```
+From summary, F-statistic is 30.85 with degree of freedoms of 5 and 18. The p-value is $3.16 \times 10^{-8}$. So we have tons of evidence to reject $H_0$. Hence the size of the orifice affects the mean percentage of radon released.
+
+(b)
+```{r}
+model$residuals
+```
+
+```{r}
+par(mfrow=c(2,2))
+qqnorm(model$residuals)
+plot(model$residuals)
+plot(model$fitted.values, model$residuals)
+```
+In Q-Q plot, the residuals lie on a straight line reasonably well. And in the other plots, the residuals lies in a band between 0 and relatively random and there is no obvious patterns.
+
+(c)
+The 95% confidence interval for $\hat{\mu} + \tau_5$ is $\hat{\mu} + \hat{\tau_5} \pm c \sqrt{\frac {\hat{\sigma}^2} {2r}}$ where $c \sim t_{18}$.
+```{r}
+qt(0.975, 18)
+```
+The CI is,
+$72.3750 - 7.3750 \pm 2.1 \frac {2.711} {\sqrt{2 \times 4}} = (62.98719, 67.01281)$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

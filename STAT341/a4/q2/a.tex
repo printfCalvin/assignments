@@ -1,0 +1,42 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,url,amssymb,epsfig,color,xspace,tikz,amsmath, amsthm}
+\begin{document}
+
+\begin{proof}
+We first prove $\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (y_i - \mu(\mathbf{x}))(\mu(\mathbf{x}) - \widehat {\mu}_{\mathbf{S}_j}({\mathbf{x}_i})) = 0$\\
+Let $P = \cup_{i = 1}^{k} A_i$ where $A_i=\{u : u \in P, x_u=x_i\}$ and the unique value of $\mathbf{x}$ is $\mathbf{x}_1, \dots, \mathbf{x}_k$.\\
+$\lvert A_i \rvert = n_i$ for all $1 \leq i \leq k$
+\begin{align*}
+    &\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (y_i - \mu(\mathbf{x}_i))(\mu(\mathbf{x}_i) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}))\\
+    = &\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} [\sum_{i \in \mathcal{A}_1} (y_i - \mu(\mathbf{x}_i))(\mu(\mathbf{x}_i) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i})) + \dots +
+    \sum_{i \in \mathcal{A}_k} (y_i - \mu(\mathbf{x}_i))(\mu(\mathbf{x}_i) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}))]\\
+\end{align*}
+We define $Ave_{i \in A_k} y_i = \bar y_{A_k}$\\
+For $i \in A_m$ where $1 \leq m \leq k$, we have,
+\begin{align*}
+    & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} [\sum_{i \in A_m} y_i \bar y_{A_m} - y_i \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) -
+    {\bar y_{A_m}}^2 + \bar y_{A_m} \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i})]\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} n_m {\bar y_{A_m}}^2 - \frac {1} {N_\mathcal{S} N} 
+    \sum_{i \in A_m} y_i \sum_{j=1}^{N_\mathcal{S}} \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \frac {n_m} {N} {\bar y_{A_m}}^2 
+    + \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \bar y_{A_m} \sum_{i \in A_m} \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i})\\
+    = & \frac{n_m}{N} {\bar y_{A_m}}^2 - \frac{n_m}{N} {\bar y_{A_m}}^2 + \frac {1} {N} [\sum_{i \in A_m} \bar y_{A_m} \frac {1} {N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} 
+    \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \sum_{i \in A_m} \bar y_{A_m} y_i \frac {1} {N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}}\widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i})]\\
+    = & \frac {1} {N} [\sum_{i \in A_m} \bar y_{A_m} \bar {\hat \mu}(\mathbf{x}_i) - \sum_{i \in A_m} y_i \bar {\hat \mu}(\mathbf{x}_i)]\\
+    & \text{for all i} \in A_m, \bar {\hat \mu}(\mathbf{x}_i) \text{ is a constant say c}\\
+    = & \frac {\bar y_{A_m} \times n_m \times c} {N} - \frac {c \times n_m \times \bar y_{A_m}} {N}\\
+    = & 0
+\end{align*}
+$ \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} [\sum_{i \in \mathcal{A}_1} (y_i - \mu(\mathbf{x}))(\mu(\mathbf{x}) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i})) + \dots +
+\sum_{i \in \mathcal{A}_k} (y_i - \mu(\mathbf{x}))(\mu(\mathbf{x}) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}))] = 0$
+Hence, 
+\begin{align*}
+    &\frac{1}{N_{\mathcal{S}}}\sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} (y_i - \widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}))^2\\
+    = &\frac{1}{N_{\mathcal{S}}}\sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} [(y_i - {\mu}({\mathbf{x}_i})) - (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))]^2\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (y_i - {\mu}({\mathbf{x}_i}))^2
+    - 2 (y_i - \mu(\mathbf{x}))(\mu(\mathbf{x}) - \widehat {\mu}_{\mathcal{S}_j}({\mathbf{x}_i}))
+    + (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (y_i - {\mu}({\mathbf{x}_i}))^2
+    + \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2\\
+\end{align*}
+\end{proof}
+\end{document}

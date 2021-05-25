@@ -1,0 +1,33 @@
+---
+title: "a1q1"
+author: "Mushi Wang"
+date: "02/06/2020"
+output: pdf_document
+---
+
+**q1**
+(a)
+Let $\beta = (\beta_1, \beta_2, \dots, \beta_n)^T$, $X = (x_1, x_2, \dots, x_n)^T$ and $\Sigma$ be variance-covariance matrix.
+\begin{align*}
+E(\tilde{\beta}_{WLS}) &= E((X^T W X)^{-1}X^T WY)\\
+  & = (X^T W X)^{-1}X^T W E(Y)\\
+  & = (X^T W X)^{-1}X^T W E(X\beta + \epsilon)\\
+  & = (X^T W X)^{-1}X^T W XE(\beta) + (X^T W X)^{-1}XW E(\epsilon)\\
+  & = (X^T W X)^{-1}X^T W X \beta + 0 \quad\quad (E(\epsilon) = 0)\\
+  & = \beta
+\end{align*}
+
+\newpage
+(b)
+Let $W = diag(\frac {1} {g(x_1)}, \frac {1} {g(x_n)}, \dots, \frac {1} {g(x_n)})$.
+So $W^T = W$.\
+Since $\Sigma = \sigma^2 diag(g(x_1), g(x_2), \dots, g(x_n))$, so $\Sigma \times W = \sigma^2$
+\begin{align*}
+  Var(\tilde{\beta}_{WLS}) & = Var((X^T W X)^{-1}XWY)\\
+  & = (X^T W X)^{-1}X^T W \times Var(Y) \times ((X^T W X)^{-1}X^T W)^T\\
+  & = (X^T W X)^{-1}X^T W \times Var(X\beta + \epsilon) \times ((X^T W X)^{-1}X^T W)^T\\
+  & = (X^T W X)^{-1}X^T W \times Var(\epsilon) \times W^T X (X^T W^T X)^{-1}\\
+  & = (X^T W X)^{-1}X^T W \times \Sigma \times W^T X (X^T W^T X)^{-1}\\
+  & = \sigma^2 (X^T W X)^{-1}X^T W X (X^T W^T X)^{-1}\\
+  & = \sigma^2 (X^T W X)^{-1}
+\end{align*}

@@ -1,0 +1,29 @@
+---
+title: "test"
+author: "Mushi Wang"
+date: "29/07/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***Q3***
+```{r}
+gra_growth = c(0.2,0.1,0.4,0.3,0.3,0.1,0.2,0.2,0.1,0.2,0.1,0.3,0.3,0.2)
+liq_growth = c(0.5,0.5,0.4,0.3,0.6,0.4,0.5,0.6,0.1,0.5,0.7,0.5,0.3,0.6)
+summary(lm(gra_growth - liq_growth ~ 1))
+```
+Where $\mu_d = \mu_g - \mu_l$  
+$H_0: \mu_d < 0$ vs $H_a: \mu_d \geq 0$  
+$d = \frac {-0.25 - 0} {0.1871} = 1.336184$ where $D \sim t_{13}$  
+```{r}
+1 - pt(-0.25 / 0.1871, 13)
+```
+$P(D > d) = 0.8977959$  
+Hence we have no evidence reject $H_0$. Liquid fertilizer results in greater growth than granular fertilizer.
+
+
+
+

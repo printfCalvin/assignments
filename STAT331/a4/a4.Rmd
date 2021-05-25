@@ -1,0 +1,118 @@
+---
+title: "a4"
+author: "Mushi Wang"
+date: "27/11/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## q1
+```{r}
+library(readxl)
+carb = read_excel("carbonation.xls")
+carb
+```
+**(a)**
+```{r}
+fit = lm(y~., carb)
+par(mfrow=c(2,2))
+
+plot(fitted(fit), residuals(fit), xlab="fitted value", ylab="Residuals")
+
+plot(carb$x1, residuals(fit), xlab="x1", ylab="Residuals")
+
+plot(carb$x2, residuals(fit), xlab="x2", ylab="Residuals")
+```
+For the plots of fitted value vs residuals and $x_2$ vs residuals, there is a qudratic pattern. 
+For the plot of $x_1$ vs residuals, the absoluate value of residuals of $x_1 = 31$ is greater than the other $x_1$ values.
+Hence the fitted model is not adequate.
+
+*(b)*
+```{r}
+fit2 = lm(y~poly(x1, 2) + poly(x2, 2), carb)
+summary(fit2)
+```
+$x_2$ and ${x_2}^2$ are significant at significant level 0.05.
+$x_1$ and ${x_1}^2$ are not significant.
+
+*(c)*
+```{r}
+par(mfrow=c(2,2))
+
+plot(fitted(fit2), residuals(fit2), xlab="fitted value", ylab="Residuals")
+
+plot(carb$x1, residuals(fit2), xlab="x1", ylab="Residuals")
+
+plot(carb$x2, residuals(fit2), xlab="x2", ylab="Residuals")
+```
+There are no systematic patterns in any plots, and the residuals lie within a band around 0.
+Hence, the fitted model is adequate.
+
+*(d)*
+```{r}
+qqnorm(residuals(fit2))
+qqline(residuals(fit2))
+```
+The points in QQ plot look approxiamtely in a straight line.
+Hence, the residual is normally distributed.
+
+*(e)*
+```{r}
+summary(fit)
+```
+The adjusted $R^2$ of the model in part(b) is greater than the model in part(a), so we prefer the model in part(b).
+
+##q2
+```{r}
+sal = read.table("salary.txt", header = FALSE)
+colnames(sal) = c("y", "degree", "exp", "sup")
+```
+
+*(a)*
+```{r}
+deg = factor(sal$degree)
+sallm = lm(y ~ deg + exp + sup, data = sal)
+summary(sallm)
+```
+```{r}
+plot(fitted(sallm), residuals(sallm), xlab = "fitted value", ylab = "residuals")
+```
+The residuals are fan shaped, the variances of random errors are non-constant.
+
+*(b)*
+```{r}
+par(mfrow = c(1,2))
+plot(sal$exp, abs(residuals(sallm)), xlab = "x3", ylab = "residuals")
+plot(sal$sup, abs(residuals(sallm)), xlab = "x4", ylab = "residuals")
+```
+The residuals are fan shaped, the variances of random errors are non-constant.
+
+*(c)*
+```{r}
+r = abs(residuals(sallm))
+rsd = lm(r~sal$exp + sal$sup)
+1/(fitted(rsd)^2)
+```
+
+*(d)*
+```{r}
+sal$wts = 1/(fitted(rsd)^2)
+sallm2 = lm(y ~ deg + exp + sup, weights = wts, data = sal)
+summary(sallm2)
+```
+These estimates are similar to the the estimates in part(a).
+
+*(e)*
+most of the deviations are less that part(a). So the second model is more precise.
+
+*(f)*
+```{r}
+plot(fitted(sallm2), residuals(sallm2), xlab="fitted value", ylab="Residuals")
+```
+The residual plot is still fan shaped. Since the estimates from two models are relatively similar, we expect a similar residual plot.
+
+```
+

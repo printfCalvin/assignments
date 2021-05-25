@@ -1,0 +1,64 @@
+-- 1.
+select distinct student.snum, student.firstname from student, enrollment e1, enrollment e2 \
+    where student.year >= 2 \
+        and student.year = CAST(SUBSTRING(e1.cnum, 3 ,1) AS INT) + 1 \
+        and student.year = CAST(SUBSTRING(e2.cnum, 3 ,1) AS INT) + 1 \
+        and e1.snum = student.snum and e2.snum = student.snum \
+        and e1.grade > 90 and e2.grade > 90 \
+        and (e1.cnum <> e2.cnum or e1.term <> e2.term or e1.section <> e2.section)
+
+-- 2.
+select distinct professor.pnum, professor.lastname from professor where \
+    professor.dept = 'CS' and \
+    'CS348' not in (select distinct class.cnum from class, enrollment where class.pnum = professor.pnum and \ 
+                        class.cnum = enrollment.cnum and class.term = enrollment.term and \ 
+                        class.section = enrollment.section and not (enrollment.grade is NULL)) and \
+    'CS234' not in (select distinct class.cnum from class, enrollment where class.pnum = professor.pnum and \ 
+                        class.cnum = enrollment.cnum and class.term = enrollment.term and \ 
+                        class.section = enrollment.section and not (enrollment.grade is NULL))
+
+-- 3.
+select distinct professor.pnum, professor.lastname from professor, class, enrollment where \
+    professor.pnum = class.pnum and class.cnum = 'CS245' and enrollment.cnum = 'CS245' 
+    and class.term = enrollment.term and class.section = enrollment.section \
+    and enrollment.grade >= all (select distinct grade from enrollment where enrollment.cnum = 'CS245')
+
+-- 4.
+select distinct e1.grade as mingrade, e2.grade as maxgrade, \
+                professor.lastname, class.cnum, class.term, class.section \
+    from professor, class, enrollment e1, enrollment e2, officehour o1, officehour o2 \
+    where professor.dept = 'CS' and \
+    o1.term = class.term and o1.cnum = class.cnum and \
+    o2.term = class.term and o2.cnum = class.cnum and \
+    o1.day = 'Monday' and o2.day = 'Friday' and \
+    12 > CAST(SUBSTRING(o1.time, 1, 2) AS INT) and 12 <= CAST(SUBSTRING(o2.time, 1, 2) AS INT) and \ 
+    class.pnum = professor.pnum and not (e1.grade IS NULL) and not (e2.grade IS NULL) and \
+    e1.section = class.section and e2.section = class.section and \
+    e1.term = class.term and e2.term = class.term and \
+    e1.cnum = class.cnum and e2.cnum = class.cnum and \
+    e1.grade <= all (select distinct grade from enrollment \
+                        where enrollment.cnum = class.cnum and enrollment.term = class.term and enrollment.section = class.section) and \
+    e2.grade >= all (select distinct grade from enrollment \
+                        where enrollment.cnum = class.cnum and enrollment.term = class.term and enrollment.section = class.section)
+
+-- 5.
+select class.cnum, class.term, count(enrollment.snum) as studentNum from enrollment, class where \ 
+    enrollment.cnum = class.cnum and enrollment.term = class.term and enrollment.section = class.section and \
+    'CS' not in (select distinct professor.dept from professor where professor.pnum = class.pnum) and \
+    'AM' not in (select distinct professor.dept from professor where professor.pnum = class.pnum) \
+    group by class.cnum, class.term \
+    order by CAST(SUBSTRING(class.term, 2, 4) AS INT), SUBSTRING(class.term, 1, 1) desc
+
+-- 6.
+select distinct count(professor.pnum) * 100 / (select count(*) from professor) \
+    as profpct from professor where \
+    professor.pnum not in \
+        (select distinct professor.pnum from professor, class c1, class c2, enrollment e1 where \
+            e1.term = c1.term and e1.cnum = c1.cnum and e1.section = c1.section and c1.term = c2.term and \
+            professor.pnum = c1.pnum and professor.pnum = c2.pnum and \
+            e1.grade is not null and c1.cnum <> c2.cnum) \
+    and professor.pnum in \
+        (select distinct professor.pnum from professor, class c1, class c2, enrollment e1 where \
+            e1.term = c1.term and e1.cnum = c1.cnum and e1.section = c1.section and c1.term = c2.term and \
+            professor.pnum = c1.pnum and professor.pnum = c2.pnum and \
+            e1.grade is null and c1.cnum <> c2.cnum)

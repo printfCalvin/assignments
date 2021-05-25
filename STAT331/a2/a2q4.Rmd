@@ -1,0 +1,46 @@
+---
+title: "Untitled"
+author: "Mushi Wang 20732874"
+date: "10/11/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+4.(a)
+```{r}
+library(readxl)
+chem <- read_excel("clathrates.xls")
+fit = lm(chem$y~chem$x1 + chem$x2, chem)
+summary(fit)
+```
+So $y = 11.0870 + 350.1192 x_1 + 0.1089 x_2$
+
+(b)
+When there are no surfactant, at the beginning of clathrate formation, 11.087% clathrate has formed.
+When the amount of surfactant increased 0.01%, there are 3.5% new formed clathrate compare to the same amount of surfactant at same time.
+In 1 mintue, there are 0.1089% new formed clathrate when the amount of surfactant does not change.
+
+(c)
+$H_0 : \beta_1 = 0$ vs. $H_a : \beta_1 \neq 0$
+form summary(fit), $se(\beta_1) = 39.68$. So $t = \frac {\hat \beta_1 - 0} {se(\beta_1)}$
+```{r}
+t = as.numeric(fit$coefficients[2] / 39.68)
+tdist = qt(0.975, nrow(chem) - 3)
+t
+tdist
+```
+Since $\lvert t \rvert > t_{0.975, 33}$ we reject $H_0$. So there is a linear relationship between clathrate formation and amount of surfactant.
+
+$H_0 : \beta_2 = 0$ vs. $H_a : \beta_2 \neq 0$
+form summary(fit), $se(\beta_2) = 9.983*10^{-3}$. So $t = \frac {\hat \beta_2 - 0} {se(\beta_2)}$
+```{r}
+t = as.numeric(fit$coefficients[3] / 0.009983)
+tdist = qt(0.975, nrow(chem) - 3)
+t
+tdist
+```
+Since $\lvert t \rvert > t_{0.975, 33}$ we reject $H_0$. There is a linear relationship between clathrate formation and time.
+

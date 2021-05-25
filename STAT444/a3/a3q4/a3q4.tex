@@ -1,0 +1,100 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\DeclareMathOperator*{\mini}{min}
+
+\begin{document}
+\noindent
+4.(a)\\
+Since $\frac {d} {dx} h'(x) \mu''(x) = h''(x) \mu''(x) + \mu'''(x) h'(x)$, 
+$h''(x) \mu''(x) = \frac {d} {dx} h'(x) \mu''(x) - \mu'''(x) h'(x)$
+\begin{align*}
+    \int_a^b \mu''(x) h''(x) dx = & \int_a^b \frac {d} {dx} h'(x) \mu''(x) - \mu'''(x) h'(x) dx\\
+    = & \int_a^b \frac {d} {dx} h'(x) \mu''(x) dx - \int_a^b \mu'''(x) h'(x) dx\\
+    = & h'(b) \mu''(b) - h'(a) \mu''(a) - \int_a^b \mu'''(x) h'(x) dx \\
+    & \text{by fundamental theorem of calculus}\\
+    = & - \int_a^b \mu'''(x) h'(x) dx \\
+    & \text{since $\mu(x)$ is linear at $a$ and $b$, } \mu''(a) = \mu''(b) = 0\\
+    = & - \int_{x_1}^{x_n} \mu'''(x) h'(x) dx \\
+    & \text{since $\mu(x)$ is linear in $[a, x_1)$ and $(x_n, b]$, } \mu'''(x) = 0\\
+    = & - \sum_{i = 1} ^{n - 1} \int_{x_i}^{x_{i + 1}} \mu'''(x) h'(x) dx \\
+    & \text{by the properties of integral}
+\end{align*}
+
+\newpage
+\noindent
+4.(b)\\
+Since $\mu(x)$ is cubic in $[x_1, x_n]$. $\mu'''(x)$ is constant. Hence $\mu'''(x) = c_i$ where 
+$x \in [x_i, x_{i + 1}]$ and $c_i$ is the coefficient of $x^3$ in the cubic function times 6.
+
+\newpage
+\noindent
+4.(c)\\
+From part (b), let $\mu'''(x) = c_i$ where $x \in [x_i, x_{i + 1}]$.
+\begin{align*}
+    &\int_{x_i}^{x_{i + 1}} \mu'''(x) h'(x) dx \\
+    = &\int_{x_i}^{x_{i + 1}} c_i h'(x) dx\\
+    = & c_i \int_{x_i}^{x_{i + 1}} h'(x) dx \\ 
+    & \text{by the properties of integral}\\
+    = & c_i(h(x_{i + 1}) - h(x_i)) \\ 
+    & \text{by fundamental theorem of calculus}
+\end{align*}
+
+\newpage
+\noindent
+4.(d)\\
+Since both $g(x)$ and $\mu(x)$ pass through points $(x_i, y_i)$ for all $i$, $h(x_i) = g(x_i) - \mu(x_i) = 0$
+for all $i$.
+\begin{align*}
+    \int_a^b \mu''(x) h''(x) dx & = - \sum_{i = 1} ^{n - 1} \int_{x_i}^{x_{i + 1}} \mu'''(x) h'(x) dx 
+    \text{\quad by part (a)}\\
+    & = - \sum_{i = 1} ^{n - 1} c_i(h(x_{i + 1}) - h(x_i)) \text{\quad by part (c)}\\
+    & = 0
+\end{align*}
+
+\newpage
+\noindent
+4.(e)\\
+Since, 
+\begin{align*}
+    \int_a^b \mu''(x) h''(x) dx & = \int_a^b \mu''(x) (g''(x) - \mu''(x)) dx \\
+    & = \int_a^b \mu''(x) g''(x) dx - \int_a^b (\mu''(x))^2 dx \\
+    & = 0
+\end{align*}
+
+So, $\int_a^b \mu''(x) g''(x) dx = \int_a^b (\mu''(x))^2 dx$\\
+Also,
+\begin{align*}
+    \int_a^b \mu''(x) h''(x) dx & = \int_a^b (\mu''(x) + g''(x) - g''(x)) h''(x) dx\\
+    & = \int_a^b (g''(x) - h''(x)) h''(x) dx\\
+    & = \int_a^b g''(x) h''(x) dx - \int_a^b (h''(x))^2 dx\\
+    & = \int_a^b g''(x) (g''(x) - \mu''(x)) dx - \int_a^b (h''(x))^2 dx\\
+    & = \int_a^b (g''(x))^2 dx - \int_a^b \mu''(x) g''(x) dx - \int_a^b (h''(x))^2 dx\\
+    & = \int_a^b (g''(x))^2 dx - \int_a^b (\mu''(x))^2 dx - \int_a^b (h''(x))^2 dx\\
+    & = 0
+\end{align*}
+Hence, $\int_a^b (g''(x))^2 dx - \int_a^b (\mu''(x))^2 dx = \int_a^b (h''(x))^2 dx \geq 0$ since, 
+$(h''(x))^2 \geq 0$.\\
+Thus, $\int_a^b (g''(x))^2 dx \geq \int_a^b (\mu''(x))^2 dx$\\
+$\int_a^b (h''(x))^2 dx = 0$ if and only if $(h''(x))^2 = 0$\\
+$\int_a^b (g''(x))^2 dx = \int_a^b (\mu''(x))^2 dx$ if and only if $(h''(x))^2 = 0$ which is equivalent to 
+$g(x) = \mu(x)$
+
+\newpage
+\noindent
+4.(f)\\
+Let $\mu(x)$ be a natural cubic spline with knots at each value $x_i$, $i = 1, \dots, n$.\\
+By part (e), $\int_a^b (g''(x))^2 dx \geq \int_a^b (\mu''(x))^2 dx$, \\
+so $\lambda \int_a^b (g''(x))^2 dx \geq \lambda \int_a^b (\mu''(x))^2 dx$ for $\lambda \geq 0$.\\
+By assumption $\mu(x_i) = y_i$ for all $i$, $\sum_{i = 1}^{n} (y_i - \mu(x_i))^2 = 0$. \\
+Since $(y_i - g(x_i))^2 \geq 0$, $\sum_{i = 1}^{n} (y_i - g(x_i))^2 \geq \sum_{i = 1}^{n} (y_i - \mu(x_i))^2$.
+\begin{align*}
+    & \sum_{i = 1}^{n} (y_i - g(x_i))^2 + \lambda \int_a^b (g''(x))^2 dx \\
+    \geq &\sum_{i = 1}^{n} (y_i - \mu(x_i))^2 + \lambda \int_a^b (\mu''(x))^2 dx \\
+    = & \lambda \int_a^b (\mu''(x))^2 dx
+\end{align*}
+$\Longrightarrow \mini_g [\sum_{i = 1}^{n} (y_i - g(x_i))^2 + \lambda \int_a^b (g''(x))^2 dx] = 
+\lambda \int_a^b (\mu''(x))^2 dx$\\
+Therefore the minimizer must be a natural cubic spline with knots at each value $x_i$, $i = 1, \dots, n$.
+
+
+\end{document}

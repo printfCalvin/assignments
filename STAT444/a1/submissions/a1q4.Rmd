@@ -1,0 +1,51 @@
+---
+title: "a1q4"
+author: "Mushi Wang"
+date: "02/06/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**q4**
+(a) 
+```{r}
+sales = read.table("../JaxSales.txt", header = TRUE)
+
+w3 = vector(length = length(sales$Year))
+j = 1
+for(i in sales$Year) {
+  w3[j] = 1 / sigma2.y[i - 1991 + 1]
+  j = j + 1
+}
+
+wls3 = lm(sales$Sales~poly(sales$Year, 3), weight = w3)
+
+plot(sales$Year, sales$Sales, xlab = "year", ylab = "sales", main = "WLS")
+lines(sales$Year, predict(wls3), type="l", col="blue", lwd=2)
+
+pred_interval3 <- predict(wls3, newdata = data.frame(year=sales$Year), 
+                          interval="prediction", level = 0.95, weight = w3)
+lines(sales$Year, pred_interval3[,2], col="orange", lty=2)
+lines(sales$Year, pred_interval3[,3], col="orange", lty=2)
+```
+
+\newpage
+(b)
+```{r}
+summary(lm(sales$Sales~poly(sales$Year, 3)))
+summary(wls1)
+summary(wls2)
+summary(wls3)
+```
+the std. errors of the model chosen in question 2 are 7.274, 125.992, 125.992, 125.992.
+
+the std. errors of the first model in question 3(c) are 12.71, 278.86, 262.23, 198.69.
+
+the std. errors of the second model in question 3(c) are 7.992, 138.434, 138.434, 105.498.
+
+the std. errors of the model in question 4(a) are 6.831, 119.961, 118.093, 98.417. 
+
+The model in 4(a) has the lowest std. error among all parameters. I will choose the model in 4(a).

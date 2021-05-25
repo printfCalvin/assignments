@@ -1,0 +1,17 @@
+---
+title: "a1q5"
+author: "Mushi Wang"
+date: "02/06/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**q5**
+Question: Is the minimum value of MSE unique(i.e. there exits two different complexicities that MSE are minimum)?
+
+Answer: True.
+
+Explanation: $MSE = [Bias(\hat{f}(x_0))]^2 + Var(\hat{f}(x_0)) + Var(\epsilon)$. The bias decreases as complexity increases, since it becomes more and more close to the value of $y$. In addition, the variance increases as complexity increases, since the model follows the error/noise too closely. Since $Var(\epsilon)$ is constant, there minimum value of MSE is unique.

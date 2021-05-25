@@ -1,0 +1,50 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,url,amssymb,epsfig,color,xspace,tikz,amsmath, amsthm}
+\begin{document}
+
+\begin{proof}
+    We first prove $\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+(\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i})) = 0$.\\
+Let $P = \cup_{i = 1}^{k} A_i$ where $A_i=\{u : u \in P, x_u=x_i\}$ and the unique value of $\mathbf{x}$ is $\mathbf{x}_1, \dots, \mathbf{x}_k$.\\
+$\lvert A_i \rvert = n_i$ for all $1 \leq i \leq k$
+\begin{align*}
+    &\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+    (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))\\
+    = & \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} [\sum_{i \in A_1} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+    (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i})) + \dots + \sum_{i \in A_k}(\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+    (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))]
+\end{align*}
+For $i \in A_m$ where $1 \leq m \leq k$, we have,
+\begin{align*}
+    & \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \sum_{i \in A_m} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - 
+    \overline{\widehat{\mu}}({\mathbf{x}_i})) (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))\\
+    = & \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \sum_{i \in A_m} \widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) \overline{\widehat{\mu}}({\mathbf{x}_i})
+        - \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \sum_{i \in A_m} \widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) {\mu}({\mathbf{x}_i})\\
+       & - \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i})^2
+        +  \frac {1} {N_\mathcal{S} N} \sum_{j=1}^{N_\mathcal{S}} \overline{\widehat{\mu}}({\mathbf{x}_i}) {\mu}({\mathbf{x}_i})\\
+    = & \frac {1} {N} \sum_{i \in A_m} \frac {\overline{\widehat{\mu}}(\mathbf{x}_i)} {N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i})
+        - \frac {1} {N} \sum_{i \in A_m} \frac {{\mu}(\mathbf{x}_i)} {N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i})
+        - \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i})^2 + \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i}) {\mu}({\mathbf{x}_i})\\
+    = & \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i})^2 - \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i})^2 +
+    \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i}) {\mu}({\mathbf{x}_i}) - \frac {1} {N} \sum_{i \in A_m} \overline{\widehat{\mu}}({\mathbf{x}_i}) {\mu}({\mathbf{x}_i})\\
+    = & 0
+\end{align*}
+So, $\frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N} \sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+(\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i})) = 0$\\
+Hence, we have,
+\begin{align*}
+    & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} 
+    (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}) + \overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} 
+    (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))^2 + (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2
+    + 2(\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))
+    (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))\\
+    = & \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} (\widehat{\mu}_{\mathcal{S}_j}({\mathbf{x}_i}) - \overline{\widehat{\mu}}({\mathbf{x}_i}))^2 + 
+    \frac{1}{N_\mathcal{S}} \sum_{j=1}^{N_\mathcal{S}} \frac{1}{N}\sum_{i \in \mathcal{P}} (\overline{\widehat{\mu}}({\mathbf{x}_i}) - {\mu}({\mathbf{x}_i}))^2\\
+\end{align*}
+\end{proof}
+
+
+
+\end{document}

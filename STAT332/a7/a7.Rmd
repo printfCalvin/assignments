@@ -1,0 +1,119 @@
+---
+title: "a7"
+author: "Mushi Wang"
+date: "07/07/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***q1***
+```{r}
+bp = read.csv("BP.csv")
+```
+(a)
+```{r}
+plot(bp$Age, bp$BP)
+```
+Since the age and blood pressure has a reasonably linear relationship, we use regression.
+```{r}
+sample_age = bp$Age - mean(bp$Age)
+bp_age = lm(bp$BP ~ sample_age)
+summary(bp_age)
+```
+since $\mu_x = 50$, and $\bar x$ is 
+```{r}
+mean(bp$Age)
+```
+$\hat{\mu}_{reg} = 121.8750 + 0.5631 (50 - 45.8125) = 124.233$
+
+$\hat{\sigma}^2 = 3.865^2 \frac {14} {15} = 13.94234$
+
+Therefore $\hat{\mu}_{reg} \pm c \sqrt{1 - \frac {16} {201}} \frac {\hat{\sigma}} {\sqrt{16}}$ where $C \sim N(0, 1)$
+Hence a $95\%$ CI is $[122.478, 125.988]$
+
+\newpage
+(b)
+```{r}
+var(bp$BP)
+mean(bp$BP)
+```
+So $\hat{\sigma^2} = 38.51667$ and $\hat \mu = 121.875$
+
+$\hat{\mu} \pm c \sqrt{1 - \frac {16} {201}} \frac {\hat{\sigma}} {\sqrt{16}}$ where $C \sim N(0, 1)$
+Hence a $95\%$ CI is $[118.958, 124.792]$
+
+\newpage
+***q2***
+(a)
+$Y_{ijk} = \mu + \tau_{ij} + \beta_{k} + R_{ijk}$ where $R_{ijk} \sim N(0, \sigma^2)$ and   
+$i = 1, 2$,   
+$j = 1, 2, 3$,   
+$k = 1, 2, 3, 4$,   
+$\sum_{i = 1}^2 \sum_{j = 1}^3 \tau_{ij} = 0$, 
+$\sum_{k = 1}^4 \beta_{k} = 0$.  
+$W = \sum_i \sum_j \sum_k(y_{ijk} - \hat{\mu} - \hat{\tau_{ij}} - \hat{\beta_{k}})^2 + \lambda_1 \sum_i \sum_j \hat{\tau_{ij}} + \lambda_2 \sum_k \hat{\beta_{k}}$
+
+So the partial derivatives are:  
+$\frac {\partial W} {\partial \hat{\mu}} = -2 \sum_i \sum_j \sum_k (y_{ijk} - \hat{\mu} - \hat{\tau_{ij}} - \hat{\beta_{k}})$  
+$\frac {\partial W} {\partial \hat{\tau_{ij}}} = -2 \sum_i \sum_j \sum_k (y_{ijk} - \hat{\mu} - \hat{\tau_{ij}} - \hat{\beta_{k}}) + \lambda_1$  
+$\frac {\partial W} {\partial \hat{\beta_k}} = -2 \sum_i \sum_j \sum_k (y_{ijk} - \hat{\mu} - \hat{\tau_{ij}} - \hat{\beta_{k}}) + \lambda_2$  
+$\frac {\partial W} {\partial \lambda_1} = \sum_i \sum_j \hat{\tau_{ij}}$  
+$\frac {\partial W} {\partial \lambda_2} = \sum_k \hat{\beta_{k}}$
+
+\newpage
+(b)
+```{r}
+options(contrasts = c('contr.sum', 'contr.poly'))
+intensity = c(90, 86, 96, 84, 100, 92, 92, 81, 102, 87, 106, 90, 105, 97, 96, 80, 114, 93, 112, 91, 108, 95, 98, 83)
+optr = as.factor(c(rep(c(1, 1, 2, 2, 3, 3, 4, 4), 3)))
+eqp = as.factor(c(rep(c(1, 2), 4), rep(c(3, 4), 4), rep(c(5, 6), 4)))
+radar = lm(intensity ~ optr + eqp)
+summary(radar)
+```
+$\hat{\sigma}^2 = \frac {w} {24-2-3-4-2+2} = \frac {\sum_i \sum_j \sum_k (y_{ijk} - \hat{\mu} - \hat{\tau_{ij}} - \hat{\beta_{k}})} {15} = 3.33$ 
+
+\newpage
+(c)
+```{r}
+anova(radar)
+```
+$H_0: \tau_{11} = \cdots = \tau_{23} = 0$ vs $H_a:$ at least one of them is not 0  
+$f = \frac {ms_{eqp}} {ms_{res}} = 26.681$, $f \sim F_{5, 15}$  
+From anova table, the p-value is $5.793 \times 10^{-07}$  
+So we have tons of evidence against $H_0$  
+Hence ground clutter and filter affect the operators ability to detect the target.  
+  
+$H_0:$ no interaction vs $H_a:$ interaction  
+```{r}
+filter = as.factor(c(rep(c(1, 2), 12)))
+clutter = as.factor(c(rep(1, 8), rep(2, 8), rep(8, 8)))
+radar2 = lm(intensity ~ optr + filter + clutter + filter * clutter)
+anova(radar2)
+```
+$f = \frac {ms_{int}} {ms_{res}} = 3.4757$, $f \sim F_{2, 15}$  
+From anova table, the p-value is $0.0575066$  
+So there is evidence against $H_0$
+Hence there may exist interaction between ground clutter and filter.  
+  
+$H_0: \beta_1 = \cdots = \beta_4 = 0$ vs $H_a:$ at least one of them is not 0  
+$f = \frac {ms_{optr}} {ms_{res}} = 12.0892$, $f \sim F_{3, 15}$  
+From anova table, the p-value is $0.0002771$  
+So there is tons of evidence against $H_0$  
+Hence blocking by operator is useful.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

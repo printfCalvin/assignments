@@ -1,0 +1,42 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,url,amssymb,epsfig,color,xspace,tikz,amsmath}
+
+\begin{document}
+
+\begin{align*}
+    E(\tilde{\theta}) & = E(\tilde{\tau_{2}} + \bar{Y}) \\
+    & = E(\tilde{\tau_{2}}) + E(\bar{Y}) \\
+    & = \tau_2 + \mu \text{\quad since unbiased}
+\end{align*}
+
+\begin{align*}
+    Var(\tilde{\theta}) & = Var(\tilde{\tau_{2}} + \bar{Y}) \\
+    & = Var(\bar{Y_2} - \bar{Y} + \bar{Y}) \\
+    & = Var(\bar{Y_2}) \\
+    & = \frac {\sigma^2} {4} 
+\end{align*}
+So,
+\begin{align*}
+    d & = \frac {\hat{\theta} - 30} {se(\tilde{\theta})} \\
+    & = \frac {25.25 - 30} {2.939 / \sqrt{4}} \\
+    & = -3.232392
+\end{align*}
+
+\begin{align*}
+    E(\tilde{\theta}) & = E(\tilde{\tau_1}) - 2 E(\tilde{\tau_2}) + E(\tilde{\tau_3}) \\
+    & = \tau_1 - 2 \tau_2 + \tau_3 \text{\quad since unbiased}
+\end{align*}
+and, 
+\begin{align*}
+    Var(\tilde{\theta}) & = Var(\tilde{\tau_1} - 2 \tilde{\tau_2} + \tilde{\tau_3}) \\
+    & = Var(\tilde{\tau_1}) + 4 Var(\tilde{\tau_2}) + Var(\tilde{\tau_3}) \\
+    & = \frac {\sigma^2} {4} + \sigma^2 + \frac {\sigma^2} {4} \\
+    & = \frac 3 2 \sigma^2
+\end{align*}
+So,
+\begin{align*}
+    d & = \frac {\hat{\tau_1} - 2 \hat{\tau_2} + \hat{\tau_3} - 0} {\frac 3 2 \hat{\sigma}^2}\\
+    & = 2 \frac {4.25 - 2 \times 6.5 - (4.25 + 6.5)} {3 \times 2.939} \\
+    & = -4.423273
+\end{align*}
+\end{document}

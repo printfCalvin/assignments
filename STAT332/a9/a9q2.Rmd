@@ -1,0 +1,103 @@
+---
+title: "a9"
+author: "Mushi Wang"
+date: "22/07/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+2.(a)
+```{r}
+income = c(60,55,78,19,21,85,42,48,58,67,110,95,94,63,54)
+mean(income)
+sqrt(var(income))
+```
+$\hat \mu = 63.26667$, $\hat \sigma = 25.99853$.  
+So a 95% C.I. is
+\begin{align*}
+  & \hat \mu \pm c \sqrt{1 - \frac n N} \frac {\hat \sigma} {\sqrt n} \text{\quad where } c \sim N(0, 1)\\
+  = & 63.26667 \pm 1.96 \sqrt{1 - \frac {15} {157000}} \frac {25.99853} {\sqrt{15}}\\
+  = & (50.11023, 76.42311)
+\end{align*}
+
+\newpage
+2.(b)
+$\hat \pi = \frac {6} {15} = 0.4$.  
+A 95% C.I. is 
+\begin{align*}
+  &\hat \pi \pm c \sqrt{\frac {\hat \pi(1 - \hat \pi)} {n} (1 - \frac n N)} \text{\quad where } c \sim N(0, 1)\\
+  = & 0.4 \pm 1.96 \sqrt{\frac {0.4 \times 0.6} {15} (1 - \frac {15} {157000})}\\
+  = & (0.1520893, 0.6479107)
+\end{align*}
+
+\newpage
+2.(c)
+Since $\frac {19} {20} = 0.95$.  
+\begin{align*}
+    c \sqrt{\frac {\hat \pi(1 - \hat \pi)} {n} (1 - \frac n N)} & \leq 0.05 \text{\quad where } c \sim N(0, 1)\\
+    n & \geq (\frac {0.05^2} {0.24^2 \times 1.96^2} + \frac {1} {157000})^{-1} \\
+    n & \geq 88.46059
+\end{align*}
+Hence, we need at least 89 people.
+
+\newpage
+2.(d)
+```{r}
+income_lib = c(55,21,42,48,94,63)
+income_con = c(60,78,19,85,58,67,110,95,54)
+mean(income_lib)
+sqrt(var(income_lib))
+```
+$\hat \mu_{1} = 53.83333$, $\hat \sigma_1 = 24.29335$.
+```{r}
+mean(income_con)
+sqrt(var(income_con))
+```
+$\hat \mu_{2} = 69.55556$, $\hat \sigma_2 = 26.50996$.
+```{r}
+3 / 5 * mean(income_con) + 2 / 5 * mean(income_lib)
+```
+$\hat \mu = 63.26667$
+```{r}
+4 / 25 * var(income_lib) / 6 * (1 - 5 * 6 / (157000 * 2))
+9 / 25 * var(income_con) / 9 * (1 - 5 * 9 / (157000 * 3))
+```
+
+$w_1^2  \frac {\sigma_1^2} {n_1}(1 - \frac {n_1} {N_1}) = 15.73627$.  
+$w_2^2  \frac {\sigma_2^2} {n_2}(1 - \frac {n_2} {N_2}) = 28.10843$.  
+So a 95% C.I. is
+\begin{align*}
+  & \hat \mu \pm c \sqrt{\sum_{i = 1}^{2} w_i^2  \frac {\sigma_i^2} {n_i}(1 - \frac {n_i} {N_i})} \text{\quad where } c \sim N(0, 1)\\
+  = & (50.28847, 76.24487)
+\end{align*}
+
+\newpage
+2.(e)
+```{r}
+mean(income_con)
+sqrt(var(income_con))
+```
+$\hat \mu = 69.55556$, $\hat \sigma = 26.50996$.
+a 95% C.I. is 
+\begin{align*}
+  &\hat \mu \pm c \sqrt{1 - \frac n N} \frac {\hat \sigma} {\sqrt n} \text{\quad where } c \sim N(0, 1)\\
+  = & 69.55556 \pm 1.96 \sqrt(1 - \frac {9 \times 5} {157000 \times 3}) \frac {26.50996} {\sqrt 9}\\
+  = & (52.23654, 86.87457)
+\end{align*}
+
+\newpage
+2.(f)
+```{r}
+mean(income_lib)
+sqrt(var(income_lib))
+```
+$\hat \mu = 53.83333$, $\hat \sigma = 24.29335$.
+a 95% C.I. is 
+\begin{align*}
+  &\hat \mu \pm c \sqrt{1 - \frac n N} \frac {\hat \sigma} {\sqrt n} \text{\quad where } c \sim N(0, 1)\\
+  = & 53.83333 \pm 1.96 \sqrt(1 - \frac {6 \times 5} {157000 \times 2}) \frac {24.29335} {\sqrt 6}\\
+  = & (34.39554, 73.27113)
+\end{align*}

@@ -1,0 +1,36 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\begin{document}
+Let $X_{aug} = \sqrt{\lambda} I_{p \times p}$ and $Y_{aug} = \vec{0}_{p \times p}$.\\
+So 
+\begin{align*}
+    X^* &= 
+    \begin{bmatrix}
+        x_{1} \\
+       x_{2} \\
+       \vdots \\
+       X_{aug}
+    \end{bmatrix}
+\end{align*}
+where $x_i = [x_{i1}, \cdots, x_{ip}]$\\
+and 
+\begin{align*}
+    Y^* &= 
+    \begin{bmatrix}
+        Y_{1} \\
+       Y_{2} \\
+       \vdots \\
+       Y_{aug}
+    \end{bmatrix}
+\end{align*}
+Let $n' = n + dim(X_{aug})$\\
+Hence, 
+\begin{align*}
+    Rss(\lambda) & = \sum_{i = 1}^{n'}(Y^*_i - X^* \beta)^2\\
+    & = \sum_{i = 1}^{n'}(Y_i - \beta_1 x_{i1} - \cdots - \beta_n x_{ip})^2\\
+    & = \sum_{i = 1}^{n}(Y_i - X \beta)^2 + (0 - \sqrt{\lambda} \beta_1)^2 + \cdots + (0 - \sqrt{\lambda} \beta_p)^2\\
+    & = \sum_{i = 1}^{n}(Y_i - X \beta)^2 + \lambda \sum_{j = 1}^p \beta_j^2
+\end{align*}
+Since, $Rss(\lambda) = Rss_{Ridge}(\lambda)$, \\
+$\hat \beta_{Ridge} = ({X^*}^T X^*)^{-1} {X^*}^T Y^* = ({X}^T X + \lambda I)^{-1} {X}^T Y$
+\end{document}

@@ -1,0 +1,242 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage,amsmath,mathtools}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\renewcommand{\baselinestretch}{1.02}
+\newcommand{\Q}[1]{\medskip\item {[{\em #1 marks\/}]}\ }
+\usepackage{xcolor}
+\newif\ifsol
+\soltrue
+\newcommand{\solution}[1]{{\ifsol \color{red} {#1} \fi}}
+
+
+\begin{document}
+%\thispagestyle{empty}
+
+\hfill CS 341, Spring 2020\par
+\hfill Semih Salihoglu
+
+\bigskip
+\begin{center}\large\bf Assignment 1 Part 1 (due Sunday, May 24, midnight EST)
+\end{center}
+
+\noindent{\bf Instructions:}
+\begin{itemize}
+\item Hand in your assignment using Crowdmark. Detailed instructions are on the course website.
+\item Give complete legible solutions to all questions.
+\item Your answers will be marked for clarity as well as correctness.
+\item For any algorithm you present, you should justify its correctness
+(if it is not obvious) and analyze the complexity.
+\end{itemize}
+
+\begin{enumerate}
+
+
+\Q{8} Give a proof from first principles (not using limits) the following statements: 
+\begin{enumerate}
+\Q{4} 
+$$n^{2.7} - 100n^{2.4} + 1000 \in \omega(n^{2.5})$$
+
+
+\solution{
+    We want to prove for all constant $c > 0$, there exists a $n_0$ such that 
+    $\lvert n^{2.7} - 100n^{2.4} + 1000 \rvert > \lvert n^{2.5} \rvert$ for all $n > n_0$\\
+    If $c > 1$\\
+    Let $n_0 = 10^{10} c^{10}$ and $n \geq n_0$
+    \begin{align*}
+        \lvert n^{2.7} - 100n^{2.4} + 1000 \rvert &= n^{2.5} (n^{0.2} - \frac {100} {n^{0.1}} + \frac {1000} {n^{2.5}})\\
+        &\geq n^{2.5} (10^2 c^2 - \frac {100} {n^{0.1}} + \frac {1000} {n^{2.5}})\\
+        &\geq n^{2.5} (10^2 c^2 - \frac {100} {10c} + \frac {1000} {n^{2.5}})\\
+        &= n^{2.5} (10^2 c^2 - \frac {10} {c} + \frac {1000} {n^{2.5}})\\
+        &> n^{2.5} (10^2 c^2 - \frac {10} {c} + 1)
+        \text{ since $\frac {1000} {n^{2.5}} \leq \frac {1000} {10^{25} c^{25}} = \frac 1 {10^{22} c^{25}} < 1$}\\
+        &> c n^{2.5}\\
+        &> 0
+    \end{align*}
+    If $0 < c \leq 1$
+    Let $n_0 = 10^{10}$ and $n \geq n_0$
+    \begin{align*}
+        n^{2.7} - 100n^{2.4} + 1000 &= n^{2.5} (n^{0.2} - \frac {100} {n^{0.1}} + \frac {1000} {n^{2.5}})\\
+        &\geq n^{2.5} (10^2 - \frac {100} {10} + \frac {1000} {n^{2.5}})\\
+        &< n^{2.5} (100 - 10 + 1) \text{ since $\frac {1000} {n^{2.5}} \leq \frac 1 {10^{22}} < 1$}\\
+        &= 91 n^{2.5}\\
+        &> c\\
+        &> 0
+    \end{align*}
+    Hence, $n^{2.7} - 100n^{2.4} + 1000 \in \omega(n^{2.5})$
+}
+
+
+\Q{4} Let $f(n)$ and $g(n)$ be positive-valued functions. Then: 
+$$\max\{f(n), g(n)\}=\Theta(f(n) + g(n))$$
+
+\solution{
+    We want to prove that there exists $c_1 > 0, c_2 > 0$ such that 
+    $$c_1 \lvert (f(n) + g(n)) \rvert \leq \lvert \max\{f(n), g(n)\} \rvert 
+    \leq \lvert c_2 (f(n) + g(n)) \rvert$$ for all $n \leq n_0$
+    Let $c_1 = \frac 1 2, c_2 = 1$
+    \begin{align*}
+        2\max\{f(n), g(n)\} &\leq f(n) + g(n)\\
+        \text{Hence, }\max\{f(n), g(n)\} &\leq \frac 1 2 (f(n) + g(n)) \text{ for all n}
+    \end{align*}
+    If $\max\{f(n), g(n)\} = f(n)$, \\$\max\{f(n), g(n)\} = f(n) < f(n) + g(n)$ since $g(n) > 0$ for all $n$\\
+    If $\max\{f(n), g(n)\} = g(n)$, \\$\max\{f(n), g(n)\} = g(n) < f(n) + g(n)$ since $f(n) > 0$ for all $n$\\
+    Therefore $\max\{f(n), g(n)\}=\Theta(f(n) + g(n))$
+}
+
+\end{enumerate}
+
+\Q{12} 
+For each pair of functions $f(n)$ and $g(n)$, 
+fill in the correct asymptotic notation among $\Theta$,
+$o$, and $\omega$ in the statement $f(n)\in$ \verb*| | $(g(n))$.
+Formal proofs are not necessary, but provide brief justifications
+for all of your answers. (The default base in logarithms is 2.)
+\begin{enumerate}
+\item $f(n) = (8n)^{250} + (3n + 1000)^{500}$ \ \ vs.\ \ $g(n)=n^{500} + (n+1000)^{400}$
+
+\solution{
+    $f(n)\in \Theta(g(n))$\\
+    $\lim_{n \to \infty} \frac {f(n)} {g(n)} = 3^{500}$
+}
+
+\item $f(n)= n^{1.5}2^n $\ \ vs.\ \ $g(n)= (n)^{100}1.99^n$.
+
+\solution{
+    $f(n)\in \omega (g(n))$\\
+    $$\lim_{n \to \infty} \frac {n^{1.5}2^n} {n^{100}1.99^n} = \frac {(\frac 2 {1.99})^n} {n^{98.5}} 
+    \overset {L'H} {=} \infty$$
+}
+
+
+\item $f(n)=(256)^{n/4}$\ \ vs.\ \ $g(n)=(125)^{n/3}$
+
+\solution{
+    $f(n)\in o (g(n))$\\
+    $$\lim_{n \to \infty} \frac {256^{n/4}} {125^{n/3}} = (\frac 4 5)^n = 0$$
+}
+
+\item $f(n) = 2^{\log(n) \cdot \log(n)} $\ \ vs.\ \ $g(n)=n^{2012}$
+
+\solution{
+    $f(n)\in \omega (g(n))$\\
+    $f(n) = 2^{\log(n) \cdot \log(n)} = n^{\log(n)}$\\
+    $\lim_{n \to \infty} \frac {n^{\log(n)}} {n^{2012}} >\lim_{n \to \infty} \frac {n^2013} {n^{2012}}
+    =\lim_{n \to \infty} n=\infty$
+}
+
+\end{enumerate}
+
+\newpage 
+\Q{10}
+Analyze the following pseudocodes and give a tight $\Theta$
+bound on the running time as a function of $n$.  Carefully show your work.
+
+\begin{enumerate}
+\Q{5} 
+\begin{tabbing}
+9.M\= for\= for\=\ for\=\+\kill
+1.\' for $i=1$ to $n$ do \\
+2.\'\>A$[i]$ = true\\  
+3.\' for $i=1$ to $n$ do \\
+4.\'\> $j=i$\\
+5.\'\> while $j \le n$ do\\
+6.\'\>\>A$[j]$ = false\\
+7.\'\>\> $j=j+i$\\
+\end{tabbing}
+
+\solution{
+    \begin{align*}
+        T(n) & = n + \sum_{i = 1}^{n} \lfloor \frac {2 n} {i} \rfloor\\
+        & \leq n + \sum_{i = 1}^{n} \frac {2 n} {i}\\
+        & = n + 2n \Theta (\log n)\\
+        & \in O(n \log n)
+    \end{align*}
+Also, 
+    \begin{align*}
+        T(n) & = n + \sum_{i = 1}^{n} \lfloor \frac {2 n} {i} \rfloor\\
+        & \geq n + \sum_{i = 1}^{n} \frac {1} {i}\\
+        & = n + n \Theta (\log n)\\
+        & \in \Omega(n \log n)
+    \end{align*}
+Hence, $T(n) \in \Theta(n \log n)$
+}
+
+
+\Q{5}
+The following is a sorting algorithm that sorts an array $A$ of $n$ integers, where each integer $e_i \in A$ is $0 \le e_i \le m-1$.  Go through the code and verify that this algorithm indeed sorts A correctly.
+\begin{tabbing}
+9.M\= for\= for\=\ for\=\+\kill
+1.\' for $i=0$ to $m-1$ do\\
+2.\'\> counts$[i]=0$\\
+3.\' for $i=0$ to $n-1$ do\\
+4.\'\> counts$[A[i]]++$\\
+5.\' $k=0$\\
+6.\' for $i=0$ to $m-1$ do\\
+7.\'\> for $j=0$ to counts$[i]-1$ do\\
+8.\'\>\> $A[k]=i$, $k=k+1$
+\end{tabbing}
+
+\solution{
+    line 2 execuates $m$ times, line 4 execuates $n$ times, line 8 execuates exactly $n$ time since $A$ has 
+    size $n$.\\
+    Putiing all together,
+    \begin{align*}
+        T(n) & = m + n + 1 + n\\
+        & \in \Theta (\max(m, n))
+    \end{align*}
+}
+
+\end{enumerate}
+
+\Q{12}
+Given a string $s = a_1 a_2 ... a_n$ of length $n$, where $a_1 a_2 ... a_n \in \{0, 1\}$, decide whether $s$ is the $k$th {\em power} of a sub-string $t$, i.e., $s=t^k$, for some $k > 1$ and string $t$. Here, $t^k$ denotes the string $t$ repeated $k$ times. For example, 01000100, 10101010, and 000000, are all perfect powers (e.g. 01000100 = 0100$^2$) but  01000110 is not. 
+
+Give an algorithm that solves this problem in $O(n^{3/2})$ time. Describe your algorithm, provide the pseudocode, and analyze the run-time of your algorithm.
+
+Hint: Observe that if $s=t^k$, and $t$ has length $\ell$, then $n = \ell k$. This implies that $\ell$ and $k$ cannot both be greater than $\sqrt{n}$.
+
+
+\end{enumerate}
+
+\solution{
+    IsPerfectPwoer(s) first loops through $2$ to $\sqrt{n}$ to find all possible values of $l$ that divides $n$.
+    For each valid value $l$, it checks whether each sub-string with length $l$ is actually equal. Then, it 
+    switches the value of $l$ and $k$, i.e. let $l = n / l$ and do the exactly same process to check if all 
+    substring are equal.\\
+    \begin{algorithm} [H]
+        \caption{IsPerfectPwoer(s)}
+        \For {$i = 2$ to $\sqrt{n}$} {
+            $l = i$\\
+            \If {$l$ divides $n$} {
+                \For {$j = 1$ to $n / l - 1$} {
+                \If {\upshape s[$j \times l \dots (j + 1) \times l $] != s[$0 \dots l - 1$]} {
+                        \textbf{break}\\
+                    }
+                \If {$j == n / l - 1$} {
+                    \Return True\\
+                }
+                }
+                $l = n / l$\\
+                \For {$j = 1$ to $n / l - 1$} {
+                    \If {\upshape s[$j \times l \dots (j + 1) \times l $] != s[$0 \dots l - 1$]} {
+                        \textbf{break}\\
+                    }
+                    \If {$j == n / l - 1$} {
+                        \Return True\\
+                    }
+                }
+            }
+        }
+        \Return False\\
+    \end{algorithm}
+    \textbf{Run-time analysis:} The outer loop(line 1-14) iterates at most $\sqrt{n}$ times. Both inner 
+    loops(line 4-8, 10-14) iterates at most $n / l - 1$ times.\\
+    Hence, 
+    \begin{align*}
+        T(n) & \leq \sqrt{n} \times 2 (\frac n l - 1)\\
+        & \leq 2 n^{\frac 3 2} - n^{\frac 1 2} \text{ , since } l \geq 1\\
+        & \in O(n^{\frac 3 2})
+    \end{align*}
+}
+
+\end{document}

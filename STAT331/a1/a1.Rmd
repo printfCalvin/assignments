@@ -1,0 +1,90 @@
+---
+title: "331a1"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(tinytex.verbose = TRUE)
+```
+
+
+(a)
+```{r}
+pd = c(9.2, 14.2, 10.7, 7.6, 13.3, 10.6, 5.9, 10.2, 14.9, 9.1, 12, 9.6, 11, 12.8, 13.6, 10.8, 5.2, 9.9, 11.6, 5.8, 15, 14, 7.1, 10.4, 11.2)
+fr = c(0.7006, 1.2904, 0.9807, 0.6152, 1.1732, 0.8312, 0.3024, 0.8939, 1.3030, 0.8220, 0.8867, 0.8971, 0.9301, 1.3025, 1.1961, 0.8416, 0.2727, 0.8293, 0.8887, 0.5289, 1.3836, 1.1992, 0.5774, 0.9677, 1.1011)
+
+plot(pd, fr, xlab = "pressure drop", ylab = "flow rate")
+```
+it appears that ther is a linear relationship between two variables.
+
+(b)
+```{r}
+workdat=as.data.frame(cbind(fr, pd))
+fit = lm(fr~pd, data=workdat)
+fit$coefficients
+#plot(pd, fr, xlab = "pressure drop", ylab = "flow rate")
+#abline(coef=fit$coef, col=2, lwd=2)
+```
+Hence, $\beta_0 = -0.1790799$ and $\beta_1 = 0.1023421$. $\hat{y} = -0.1790799 + 0.1023421 x_i$
+
+(c)
+We assume $H_0: \beta_1 = 0$, $H_a: \beta_1 \neq 0$
+if the t value is larger than $t_{0.025, 23}$
+```{r}
+y.hat = as.numeric(fit$coefficients[1]) + as.numeric(fit$coefficients[2])*pd
+s2 = sum((y.hat - fr)^2) / (length(fr) - 2)
+Sxx = sum((pd - mean(pd))^2)
+se = sqrt(s2 / Sxx)
+t1 = as.numeric(fit$coefficients[2] / se)
+paste("t1 =", t1)
+qt(0.975, length(fr) - 2)
+2*pt(-abs(t1),df=length(fr)-2)
+```
+We can see that $\lvert t_1 \rvert = 16.2381$ is much greater than $t_{0.025, 23} = 2.068658$. So we reject $H_0$. 
+$p$-value = 4.294252e-14 which is far less than 0.05. We should reject $H_0$
+
+(d)
+We assume $H_0: \beta_1 = 0.1$, $H_a: \beta_1 \neq 0.1$
+```{r}
+t2 = (as.numeric(fit$coefficients[2]) - 0.1) / se
+paste("t2 =", t2)
+qt(0.975, length(fr) - 2)
+```
+since $\lvert t_2 \rvert = 0.371610582764785$ is less than $t_{0.025, 23} = 2.068658$. We have no evidence against $H_0$.
+
+(e)
+We assume $H_0: \beta_0 = -0.1$, $H_a: \beta_0 \neq -0.1$
+```{r}
+s2.b0 = (1 / length(fr) + mean(pd)^2 / Sxx) * s2
+se.b0 = sqrt(s2.b0)
+t3 = (as.numeric(fit$coefficients[1]) + 0.1) / se.b0
+paste("t3 =", t3)
+qt(0.975, length(fr) - 2)
+```
+Since $\lvert t_3 \rvert = 1.14305543746396$ is less than $t_{0.025, 23} = 2.068658$. We have no evidence against $H_0$.
+
+(f)
+```{r}
+y.hat2 = as.numeric(fit$coefficients[1]) + as.numeric(fit$coefficients[2])*10
+val = qt(0.95,df=length(fr)-2)
+se2 = sqrt(1 / length(pd) + (10 - mean(pd))^2 / Sxx) * se
+ci = c(y.hat2 - val * se2, y.hat2 + val * se2)
+ci
+```
+The 90% confidence interval is [0.8421250, 0.8465573]
+
+(g)
+```{r}
+y.hat2 = as.numeric(fit$coefficients[1]) + as.numeric(fit$coefficients[2])*10
+val = qt(0.975,df=length(fr)-2)
+se2 = sqrt(1 + 1 / length(pd) + (10 - mean(pd))^2 / Sxx) * se
+ci = c(y.hat2 - val * se2, y.hat2 + val * se2)
+ci
+```
+The 95% prediction interval is [0.8421250, 0.8465573]
+
+(h)
+The 95% prediction interval is [0.8421250, 0.8465573], however, $1.1 \notin 95$% ci. We believe the measurement system has changed

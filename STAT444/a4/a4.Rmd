@@ -1,0 +1,344 @@
+---
+title: "a4"
+author: "Mushi Wang"
+date: "04/08/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***q1***
+(a)
+If we have multicollinearity, the estimation of coefficients will be inaccurate and the variance of the estimators of coefficients will be very large.
+
+\newpage
+(b)
+```{r}
+HigherEducation = read.csv("HigherEducation.csv")
+HigherEducation_Modelling = HigherEducation[1:600,]
+HigherEducation_Test = HigherEducation[601:777,]
+```
+
+```{r}
+library(car)
+vif(lm(HigherEducation_Modelling[,1] ~ ., data = HigherEducation_Modelling[,-1]))
+```
+There are several multicollinearity issues. Accept, Enroll, Top10perc, Top25perc, F.Undergrad are problematic. Since all of them have a very high VIF, which indicates $R^2_{X_j|X_{-j}}$ is close to one and there is a linear relationship between the variables and the other 16 variables.
+
+\newpage
+(c)
+```{r}
+library(glmnet)
+x = as.matrix(HigherEducation_Modelling[,-1])
+y = HigherEducation_Modelling$Apps
+
+fit.Lasso=glmnet(x, y, lambda=35, family = "gaussian")
+coef(fit.Lasso)
+```
+Accept, Top10perc, P.Undergrad, Outstate, Room.Board, PhD, Terminal, S.F.Ratio, perc.alumni, Expend and Grad.Rate are selected. It is a little different to the model in part (b). Two problematic variables, Accept and Top10perc, are in the lasso model. But the lasso model elimnates the variables with very high VIF.
+
+\newpage
+(d)
+```{r}
+rss1 = sum((HigherEducation_Test$Apps - predict(lm(y ~ ., data = HigherEducation_Modelling[,-1]), HigherEducation_Test[,-1]))^2)
+rss2 = sum((HigherEducation_Test$Apps - predict(fit.Lasso, newx = as.matrix(HigherEducation_Test[,-1])))^2)
+
+rss1
+rss2
+```
+THe residuals sum of squares of model in part (b) is 98553375.  
+THe residuals sum of squares of model in part (c) is 92792554.    
+The model in part(c) is much better.
+
+\newpage
+***q2***
+(a)
+```{r}
+library(lars)
+edu_matrix = as.matrix(HigherEducation_Modelling)
+lasso = lars(edu_matrix[,-1], HigherEducation_Modelling$Apps, type = "lasso")
+plot(lasso)
+lasso$actions[1:6]
+```
+We select accept, Top10perc, Expend, Outstate, Room.Board, Grad.Rate.
+
+\newpage
+(b)
+```{r}
+fw_step = lars(edu_matrix[,-1], HigherEducation_Modelling$Apps, type = "step")
+plot(fw_step)
+fw_step$actions
+```
+```{r}
+lasso$actions
+```
+
+[comment]: <> (1 3 15 7 8 12 16 2 6 13 4 5 11 9 10 14)  
+[comment]: <> (1 3 15 7 8 16 14 12 11 6 13 2 4 9 5 10) 
+Both two models select the same first five variables. But starting from the sixth variable, the selections are quite different.
+
+\newpage
+(c)
+```{r}
+set.seed(444)
+min_lam = cv.glmnet(x, y, alpha = 1, family = "gaussian")$lambda.min
+min_lam
+```
+```{r}
+fit.Lasso2 = glmnet(x, y, lambda=min_lam, family = "gaussian")
+sum((HigherEducation_Test$Apps - predict(fit.Lasso2, newx = as.matrix(HigherEducation_Test[,-1])))^2)
+```
+\newpage
+(d)
+```{r}
+set.seed(444)
+alphas = c(0, 0.25, 0.5, 0.75, 1)
+lambda_min = rep(0, length(alphas))
+
+for(i in 1:length(alphas)) {
+  lambda_min[i] = cv.glmnet(x, y, alpha = alphas[i], family = "gaussian")$lambda.min
+}
+min(lambda_min)
+alphas[which.min(lambda_min)]
+```
+```{r}
+fit.Lasso3 = glmnet(x, y, lambda = min(lambda_min), 
+                    alpha = alphas[which.min(lambda_min)], family = "gaussian")
+sum((HigherEducation_Test$Apps - 
+       predict(fit.Lasso3, newx = as.matrix(HigherEducation_Test[,-1])))^2)
+```
+
+\newpage
+***q3***
+(a)
+Let $X_{aug} = \sqrt{\lambda} I_{p \times p}$ and $Y_{aug} = \vec{0}_{p \times p}$.  
+So 
+\begin{align*}
+    X^* &= 
+    \begin{bmatrix}
+        x_{1} \\
+       x_{2} \\
+       \vdots \\
+       X_{aug}
+    \end{bmatrix}
+\end{align*}
+where $x_i = [x_{i1}, \cdots, x_{ip}]$  
+and 
+\begin{align*}
+    Y^* &= 
+    \begin{bmatrix}
+        Y_{1} \\
+       Y_{2} \\
+       \vdots \\
+       Y_{aug}
+    \end{bmatrix}
+\end{align*}
+Let $n' = n + dim(X_{aug})$  
+Hence, 
+\begin{align*}
+    Rss(\lambda) & = \sum_{i = 1}^{n'}(Y^*_i - X^* \beta)^2\\
+    & = \sum_{i = 1}^{n'}(Y_i - \beta_1 x_{i1} - \cdots - \beta_n x_{ip})^2\\
+    & = \sum_{i = 1}^{n}(Y_i - X \beta)^2 + (0 - \sqrt{\lambda} \beta_1)^2 + \cdots + (0 - \sqrt{\lambda} \beta_p)^2\\
+    & = \sum_{i = 1}^{n}(Y_i - X \beta)^2 + \lambda \sum_{j = 1}^p \beta_j^2
+\end{align*}
+Since, $Rss(\lambda) = Rss_{Ridge}(\lambda)$,  
+$\hat \beta_{Ridge} = ({X^*}^T X^*)^{-1} {X^*}^T Y^* = ({X}^T X + \lambda I)^{-1} {X}^T Y$
+
+\newpage
+(b)
+```{r}
+standardize = function(x) {
+  return((x - mean(x)) / sd(x))
+}
+
+lm_ridge = data.frame(Apps = HigherEducation$Apps, 
+                      Top10perc = standardize(HigherEducation$Top10perc),
+                      PhD = standardize(HigherEducation$PhD),
+                      perc.alumni = standardize(HigherEducation$perc.alumni))
+lambda = 100 
+x_aug = sqrt(lambda) * diag(3)
+aug = data.frame(Apps = rep(0, 3), Top10perc = x_aug[,1], PhD = x_aug[,2], perc.alumni = x_aug[,3])
+lm_ridge_aug = rbind(lm_ridge, aug)
+summary(lm(lm_ridge_aug$Apps ~ . -1, data = lm_ridge_aug[, -1]))
+```
+```{r}
+solve(t(as.matrix(lm_ridge[, -1])) %*% as.matrix(lm_ridge[, -1]) + lambda * diag(3)) %*% 
+t(as.matrix(lm_ridge[, -1])) %*% lm_ridge[, 1]
+```
+They are the same. Since $Rss(\lambda)$ is the same by part (a).
+
+\newpage
+***q4***
+(a)
+```{r}
+library(mmnst) 
+acd = read.csv("AuditoryCortexData.csv")
+
+removeNA = function(acd) {
+  v = vector("list", length = ncol(acd))
+  for(i in 1:ncol(acd)) {
+    temp = c()
+    for(j in 1:nrow(acd)) {
+      if(! is.na(acd[j, i])) {
+        temp = append(temp, acd[j, i])
+      }
+    }
+    v[[i]] = temp
+  }
+  return(v)
+}
+RasterPlot("additory cortex", removeNA(acd))
+```
+it is homogeneous.
+
+\newpage
+(b)
+```{r}
+acd_list = removeNA(acd)
+cv.output1 = RDPCrossValidation(acd_list, t.end = 10, max.J = 6, pct.diff.plot = FALSE, print.J.value = FALSE)
+cv.output1$lambda.ISE
+cv.output1$J.ISE
+```
+\newpage
+(c)
+```{r, cache=TRUE}
+Unlist.Data = sort(unlist(acd_list))
+t.min = floor(min(Unlist.Data))
+t.max = ceiling(max(Unlist.Data))
+cv.output2 = RDPCrossValidation(Unlist.Data, t.min , t.max , poss.lambda = seq(0, 5, by = 0.1), max.J = 6,
+                                pct.diff.plot = FALSE, print.J.value = FALSE)
+cv.output2$lambda.ISE
+cv.output2$J.ISE
+```
+ 
+\newpage
+(d)
+```{r, cache = TRUE}
+cvs = data.frame(lambda = rep(0, ncol(acd)), N = rep(0, ncol(acd)))
+for(i in 1: ncol(acd)) {
+  cv.out = RDPCrossValidation(acd_list[[i]], t.end = 10, max.J = 6, 
+                              pct.diff.plot = FALSE, print.J.value = FALSE)
+  cvs[i, 1] = cv.out$lambda.ISE
+  cvs[i, 2] = 2^cv.out$J.ISE
+}
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+Mode(cvs$N)
+mean(cvs$lambda)
+```
+
+\newpage
+(e)
+```{r}
+plotIF = function(cv.output) {
+  Terminal.Points = seq(t.min,t.max,length=2^cv.output$J.ISE+1)
+
+  Sig = sum(Unlist.Data<=Terminal.Points[2])
+  for(i in 3:length(Terminal.Points)){
+    Sig[(i-1)] = sum(Unlist.Data<=Terminal.Points[i] &
+                     Unlist.Data>Terminal.Points[(i-1)] )
+  }
+  ct = PoissonRDP(Sig , cv.output$lambda.ISE)  # the original cv.output$lambda.ISE/log(length(Sig)) is incorrect
+  t = seq(0,10,length=length(ct))
+  plot(ct~t,type="s", cex.axis=1.5 , cex.lab = 1.5 ,ylab="c(t)")
+}
+
+par(mfrow = c(2, 2))
+plotIF(cv.output1)
+plotIF(cv.output2)
+plotIF(list(lambda.ISE = cvs$lambda, J.ISE = 1))
+```
+The models from (b) and (d) are very similar, the model from (c) is very different to others.
+
+\newpage
+(f)
+```{r}
+ct<-FindCt(acd_list, t.min , t.max, cv.output1$lambda.ISE,cv.output1$J.ISE)
+
+t = seq(t.min,t.max,length=500)
+theta = matrix(NA,nrow=500,ncol=dim(ct[[2]])[1])
+Terminal.Points = seq(t.min,t.max,length=2^cv.output1$J.ISE+1)
+for(i in 1:ncol(theta)){
+  ct.function.i = stepfun(Terminal.Points , c(0,ct[[2]][i,],0))
+  theta[,i] = ct.function.i(t)
+}
+
+GOFPlot(
+  acd_list,
+  theta,
+  t.start = t.min,
+  t.end = t.max,
+  neuron.name = NULL,
+  resolution = (t.max - t.min)/(length(theta) - 1),
+  axis.label.size = 18,
+  title.size = 24
+)
+```
+```{r}
+ct<-FindCt(acd_list, t.min , t.max, cv.output2$lambda.ISE,cv.output2$J.ISE)
+
+t = seq(t.min,t.max,length=500)
+theta = matrix(NA,nrow=500,ncol=dim(ct[[2]])[1])
+Terminal.Points = seq(t.min,t.max,length=2^cv.output2$J.ISE+1)
+for(i in 1:ncol(theta)){
+  ct.function.i = stepfun(Terminal.Points , c(0,ct[[2]][i,],0))
+  theta[,i] = ct.function.i(t)
+}
+
+GOFPlot(
+  acd_list,
+  theta,
+  t.start = t.min,
+  t.end = t.max,
+  neuron.name = NULL,
+  resolution = (t.max - t.min)/(length(theta) - 1),
+  axis.label.size = 18,
+  title.size = 24
+)
+```
+```{r}
+ct<-FindCt(acd_list, t.min , t.max, 0, 1)
+
+t = seq(t.min,t.max,length=500)
+theta = matrix(NA,nrow=500,ncol=dim(ct[[2]])[1])
+Terminal.Points = seq(t.min,t.max,length=2^1+1)
+for(i in 1:ncol(theta)){
+  ct.function.i = stepfun(Terminal.Points , c(0,ct[[2]][i,],0))
+  theta[,i] = ct.function.i(t)
+}
+
+GOFPlot(
+  acd_list,
+  theta,
+  t.start = t.min,
+  t.end = t.max,
+  neuron.name = NULL,
+  resolution = (t.max - t.min)/(length(theta) - 1),
+  axis.label.size = 18,
+  title.size = 24
+)
+```
+Since all models lies in the band, but most of them are above the 45 degree line, the fits are reasonably good.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

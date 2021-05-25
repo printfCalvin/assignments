@@ -1,0 +1,139 @@
+create table product (
+    manu_name char(50) not null,
+    manu_id integer not null,
+    mdnum integer not null,
+    prod_id integer not null,
+    primary key (prod_id)
+)
+
+create table camera (
+    stknum integer not null,
+    price integer not null,
+    pixnum integer not null,
+    mdnum integer not null,
+    elec_viewfinder char(4) not null,
+    feature char (21),
+    sen_size integer not null,
+    prod_date date not null,
+    manu_id integer not null,
+    eval integer not null,
+    cm_id integer not null,
+    primary key (cm_id),
+    foreign key (manu_id) references product(manu_id),
+    foreign key (cm_id) references product(prod_id),
+    foreign key (mdnum) references product(mdnum)
+)
+
+create table single_lens_camera (
+    stknum integer not null,
+    price integer not null,
+    pixnum integer not null,
+    mdnum integer not null,
+    elec_viewfinder char(4) not null,
+    feature char (21),
+    sen_size integer not null,
+    prod_date date not null,
+    manufacturer integer not null,
+    eval integer not null,
+    ap_range_lo float not null,
+    ap_range_hi float not null,
+    fo_range_lo float not null,
+    fo_range_hi float not null,
+    cm_id integer not null,
+    primary key (cm_id),
+    foreign key (manu_id) references product(manu_id),
+    foreign key (cm_id) references product(prod_id),
+    foreign key (mdnum) references product(mdnum)
+)
+
+create table lens (
+    stknum integer not null,
+    price integer not null,
+    mdnum integer not null,
+    eval integer not null,
+    ap_range_lo float not null,
+    ap_range_hi float not null,
+    fo_range_lo float not null,
+    fo_range_hi float not null,
+    prod_date date not null,
+    manufacturer char(50) not null,
+    cm_id integer not null,
+    prod_id integer not null,
+    primary key (cm_id, prod_id),
+    foreign key (manu_id) references product(manu_id),
+    foreign key (cm_id) references camera(cm_id),
+    foreign key (mdnum) references product(mdnum),
+    foreign key (prod_id) references prodcut(prod_id)
+)
+
+create table customer (
+    cust_name char(50) not null,
+    region char(9) not null,
+    cnum integer not null,
+    email char(50) not null,
+    ship_addr char (50) not null,
+    primary key (cnum) 
+)
+
+create table evaluation (
+    prod_id integer not null,
+    cnum integer not null,
+    eval integer not null,
+    primary key (cnum, prod_id),
+    foreign key (prod_id) references prodcut(prod_id), 
+    foreign key (cnum) references customer(cnum)
+)
+
+create table pur_order (
+    prod_id integer not null,
+    price integer not null,
+    cnum integer not null,
+    od_status char(12) not null,
+    primary key (prod_id, cnum),
+    foreign key (prod_id) references prodcut(prod_id), 
+    foreign key (cnum) references customer(cnum)
+)
+
+create assertion elec_viewfinder
+check ( not exists (select * from camera where not (elec_viewfinder = 'yes' or elec_viewfinder = 'no')
+                    union
+                    select * from single_lens_camera where not (elec_viewfinder = 'yes' or elec_viewfinder = 'no')))
+
+create assertion range_view_finder
+check (
+    not exists (select * from camera where not (feature = 'opt_viewfinder' or feature = 'through_the_lens' or feature = 'opt_rangefinder' or feature is null)
+                union
+                select * from single_lens_camera where not (feature = 'opt_viewfinder' or feature = 'through_the_lens' or feature = 'opt_rangefinder' or feature is null)))
+)
+
+create assertion region
+check (
+    not exists (select * from customer where not (region = 'domestic' or region = 'foreign'))
+)
+
+create assertion status
+check (
+    not exists (select * from pur_order where not (od_status = 'outstanding' or od_status = 'payed'))
+)
+
+create assertion evaluation
+check (
+    not exists (select * from evaluation where not (1 <= eval and eval <= 5))
+)
+
+create assertion ranges
+check (
+    not exists ((select * from lens where not (ap_range_lo <= ap_range_hi and fo_range_lo <= fo_range_hi))
+                union 
+                (select * from single_lens_camera where not (ap_range_lo <= ap_range_hi and fo_range_lo <= fo_range_hi)))
+)
+
+create assertion evaluation_num
+check (
+    not exists (select product.pub_id from product where not exists (select * from evaluation where product.pub_id = evaluation.pro.id))
+)
+
+create assertion lens_num
+check (
+    not exists (select count(lens.prod_id) from camera, lens where lens.cm_id = camera.cm_id and count(lens.prod_id) < 2 group by cm_id)
+)
